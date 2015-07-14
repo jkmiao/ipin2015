@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8"></meta>
+	<title>js example</title>
+
+	<script type="text/javascript">	
+		function mOver(obj){
+			document.getElementById("myname").innerHTML = "缪伟宏";
+			obj.style.backgroundColor="#1ec5e5";
+		}
+
+		function mOut(obj){
+			obj.innerHTML = "who am I? ";
+			obj.style.backgroundColor="#D94A38";
+		}
+	</script>
+</head>
+<body>
+
+<div id="myname" onmouseover="mOver(this)" onmouseout="mOut(this)" 
+ style="width:100px;height:50px;padding-top:25px;text-align:center;"></div>
+
+
+
+  <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+    <div id="bar_demo" style="width:800px;height:400px;margin:0 auto"></div>
+    <p></p>
+    <div id="demo2" style="width:800px;height:400px;margin:0 auto"></div>
+
+
+    <!-- ECharts单文件引入 -->
+    <script src="http://echarts.baidu.com/build/dist/echarts.js"></script>
+    <script type="text/javascript">
+        // 路径配置
+        require.config({
+            paths: {
+                echarts: 'http://echarts.baidu.com/build/dist'
+            }
+        });
+        
+        // 使用
+        require(
+            [
+                'echarts',
+                'echarts/chart/bar', // 使用柱状图就加载bar模块，按需加载
+                'echarts/chart/line'                
+
+            ],
+          
+
+            function (ec) {
+                // 基于准备好的dom，初始化echarts图表
+                var myChart1 = ec.init(document.getElementById('bar_demo')); 
+                var myChart2 = ec.init(document.getElementById('demo2'));
+                
+                var option1 = {
+                	title:{
+                		text:'中山大学',
+                		X:'center',
+                		subtext:'纯属虚构'
+                	},
+                    tooltip: {
+                    	trigger:'axis',
+                        show: true
+                    },
+
+                    legend: {
+                        data:['热门专业','就业率']
+                    },
+                    toolbox:{
+
+                    		show:true,
+                    		feature:{
+                    			mark:{show:true},
+                    			dataView:{show:true,readOnly:false},
+                    			magicType:{show:true,type:['line','bar']},
+                    			restore:{show:true},
+                    			saveAsImage:{show:true}
+                    		}                    	
+
+                    },
+                    calculable:true,
+
+                    xAxis : [
+                        {
+                            type : 'category',
+                            data : ["软件工程","计算机科学与技术","自动化","网络工程","通信工程","信息安全"]
+                        }
+                    ],
+                    yAxis : [
+                        {
+                            type : 'value',
+                            name : '人数(人)',
+                            axisLabel:{
+                            	formatter:'{value} '
+                            }
+                        },
+                        {
+                        	type:'value',
+                        	name:'就业率',
+                        	axisLabel:{
+                        		formatter:'{value} %'
+                        	}
+                        }
+                    ],
+                    series : [
+                        {
+                            name:"热门专业",
+                            type:"bar",
+                            data:[400, 520, 240, 410, 250, 320],
+                            markPoint:{
+                            	data:[
+                            		{type:'max',name:'最大值'},
+                            		{type:'min',name:'最小值'}                            	
+                            	]
+                            }
+
+                        },
+                        {
+                        	name:'就业率',
+                        	type:'line',
+                        	yAxisIndex:1,
+                        	markLine:{
+                            	data:[
+                            	{type:'average',name:'平均值'}]
+                            },
+                        	data:[95,98,92,87,96,97]
+                        }
+                    ]
+                };        
+
+                var zrColor = require('zrender/tool/color');
+
+                var colorList = [
+                	  '#ff7f50','#87cefa','#da70d6','#32cd32','#6495ed',
+                	  '#ff69b4','#ba55d3','#cd5c5c','#ffa500','#40e0d0'
+                ];
+                var itemStyle = {
+                	normal:{
+                		color:function(params){
+                			if(params.dataIndex<0){
+                				// for legend
+                				return zrColor.lift(colorList[colorList.length-1],params.seriesIndex*0.1);
+                			}else{
+
+                				// for bar
+                				return zrColor.lift(colorList[params.dataIndex],params.seriesIndex*0.1);
+                			}
+                		}
+                	}
+                };
+
+                var option2 = {
+                	title:{
+                		text:'2012-2015年中国城镇居民家庭人均消费（元）',
+                		subtext:'数据来自国家统计局',
+                		sublink:'http://data.stats.gov.cn/search/wordlist2?keyword=%E5%9F%8E%E9%95%87%E5%B1%85%E6%B0%91%E6%B6%88%E8%B4%B9'
+                	},
+                	tooltip:{
+                		trigger:'axis',
+                		backgroundColor:'rgba(255,255,255,0.7)',
+                		axisPointer:{
+                			type:'shadow'
+                		},
+                		formatter:function(params){
+                			//for text color
+                			var color = colorList[params[0].dataIndex];
+                			var res = '<div sytle="color:' + color +'">';
+                			res += '<strong>'+params[0].name+'消费（元)</strong>'
+                			for(var i=0;i<params.length;i++){
+                				res +='<br/>'+params[i].seriesName+':'+params[i].value
+                			}
+                			res+='</div>';
+                			return res;
+                		}
+                	},
+                	legend:{
+                		x:'right',
+                		data:['2012','2013','2014','2015']
+                	},
+                	toolbox:{
+                		show:true,
+                		orient:'vertical',
+                		y:'center',
+                		feature:{
+                			mark:{show:true},
+                			dataView:{show:true,readOnly:false},
+                			restore:{show:true}
+                		}
+                	},
+                	calculable:true,
+                	grid:{
+                		y:80,y2:40,x2:40
+                	},
+                	xAxis:[{
+                		type:'category',
+                		data:['食品','衣着','家庭设备及用品','医疗保健','交通和通信','文教娱乐','其他']
+                	}],
+                	yAxis:{
+                		type:'value'
+                	},
+                	series:[
+                		{
+                			name:'2012',
+                			type:'bar',
+                			itemStyle:itemStyle,
+                			 data: [4804.7,1444.3,1332.1,908,871.8,1983.7,1627.6,499.2]
+                		},
+                		{
+                			name:'2013',
+                			type:'bar',
+                			itemStyle:itemStyle,
+                			data: [5506.3,1674.7,1405,1023.2,969,2149.7,1851.7,581.3]
+                		},
+                		{
+                			name:'2014',
+                			type:'bar',
+                			itemStyle:itemStyle,
+                			data: [6040.9,1823.4,1484.3,1116.1,1063.7,2455.5,2033.5,657.1]
+                		},
+                		{
+                			name:'2015',
+                			type:'bar',
+                			itemStyle:itemStyle,
+                			data: [6311.9,1902,1745.1,1215.1,1118.3,2736.9,2294,699.4]
+                		}
+                	]
+                };
+         
+                // 为echarts对象加载数据 
+                myChart1.setOption(option1); 
+                myChart2.setOption(option2);
+
+            }
+        );
+    </script>
+
+
+
+</body>
+</html>
