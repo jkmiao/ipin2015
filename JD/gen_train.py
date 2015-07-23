@@ -17,10 +17,10 @@ class gen_train():
         load = myword2vec.load_json(fileName)
         dataList = load.getData('inc_description')
         for data in dataList:
-            for line in self.w2v.word_split(data):
+            for line in self.w2v.word_split(data.strip()):
                 w2v_para = np.zeros((1,50))
                 wlist = self.w2v.cut_words(line)
-                w2vlist = self.w2v.wordtovec(wlist,w2vdic)
+                w2vlist = self.w2v.wordtovec(wlist,self.w2vdic)
                 for vec in w2vlist:
                     w2v_para += np.array(vec)
                 outFile.write('-1'+' ')
@@ -29,4 +29,25 @@ class gen_train():
                     outFile.write(str(i)+':'+str(num)+' ')
                     i+=1
                 outFile.write('\n')
+        outFile.close()
+
+
+    def gen_pos_train(self,fileName):
+        outFile = open('JD2vec.txt','w')
+        load = myword2vec.load_json('./jd_100w.json')
+        dataList = load.getData('job','job_description')
+        for data in dataList:
+            if len(data.strip())>2:
+                for line in self.w2v.word_split(data.strip()):
+                    w2v_para = np.zeros((1,50))
+                    wlist = self.w2v.cut_words(line)
+                    w2vlist = self.w2v.wordtovec(wlist,self.w2vdic)
+                    for vec in w2vlist:
+                        w2v_para += np.array(vec)
+                    outFile.write('+1'+' ')
+                    i = 1
+                    for num in w2v_para[0]:
+                        outFile.write(str(i)+':'+str(num)+' ')
+                    outFile.write('\n')
+
         outFile.close()
