@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset='utf-8'>
+	<title> 自动生成ＪＤ</title>
+	<link rel="stylesheet" href = "http://cdn.amazeui.org/amazeui/2.4.0/css/amazeui.min.css">
+	<link rel = "icon" href="head.ico">
+	<style>
+	.hint{
+		color:#c60a00;
+        margin:20px;
+	}
+	li {
+		list-style: none;
+        line-height:10px;
+
+	}
+	</style>
+
+	<script type="text/javascript">
+	function get_result(){
+		document.getElementById("res_hint").innerHTML = '<p class="am-active">正在生成结果，请稍等...'+'<i class="am-icon-spinner am-icon-spin"></i></p>';
+        document.getElementById('res_hint').style.color="#c60a00";
+        return true
+	}
+	</script>
+</head>
+<body>
+    <div class="am-topbar">
+        <h2 class="am-active ">&nbsp;&nbsp; 职位分级在线演示</h2>
+    </div>
+
+    <div class="am-g">
+    	<div class="am-u-sm-8 am-u-sm-centered">
+    		<div class="am-intro-left" style="height:180px">
+    			<label class="am-active"><em>使用说明</em></label>
+    				<p class="am-serif">分别输入职位名称，职位领域id，再点击提交，即可，生成结果为１－１０级，领域对应列表请见下面说明。</p>
+    		</div>
+    		<form class="am-form-inline" role='form' action='/rankjob' method='post' >
+    			<input name="jobname" type="text" class="am-form-field am-radius" style="width:40%" placeholder='input jobname here' autofocus='True' value={{jobname}}></input>
+    			<input name="domain" type="number" class="am-form-field am-round" style="width:10%" title='input domain id here' min="1" max="50" value={{domain}}></input>
+    			<button type="submit" onclick="get_result()" class="am-btn am-btn-primary" value="submit">submit</button>
+    		</form>
+            <div style="clear:both"></div>
+
+            <div id="result" style="background-color:#f8f8f8">
+                <p class="hint">领域对应列表</p>
+                {% for k,v in domain_hint.items() %}
+                <ul><li>{{k}} : {{v}}</li></ul>
+                {%end%}
+                </br >
+            </div>
+        </div>
+    </div> 
+    <script type="text/javascript" src="http://cdn.amazeui.org/amazeui/2.4.0/js/amazeui.min.js"></script>
+</body>
+</html>
