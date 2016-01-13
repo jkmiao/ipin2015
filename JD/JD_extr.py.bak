@@ -1,0 +1,328 @@
+#!/usr/bin/env python
+# coding=utf-8
+
+
+import sys 
+import jieba
+import jieba.analyse
+import re
+import numpy as np
+import threading
+import pickle
+import multiprocessing
+import time
+
+reload(sys)
+sys.path.append('./liblinear/python')
+
+from liblinearutil import *
+sys.setdefaultencoding('utf-8')
+
+class JD_extr:
+    def __init__(self):
+        self.degreedic = []
+        self.rangdic = {}
+        self.rangdic_req = {}
+
+        with open('./req.range') as reqfile:
+            line = reqfile.readlines()
+            for i in line:
+                item = i.strip().split(" ")
+                self.rangdic_req[str(item[0])] = tuple(map(lambda x: float(x),item[1:]))
+
+        with open('./major.range') as infile:
+            line = infile.readlines()
+            for i in line:
+                item = i.strip().split(" ")
+                self.rangdic[str(item[0])] = tuple(map(lambda x:float(x),item[1:]))
+        
+        self.vector_file = '../JD_Trip/word2vec_dict.pkl'
+        self.m = load_model('./LR_major.model')
+        self.mq = load_model('./LR_req.model')
+        self.major = []
+        
+        self.word2vec_dict = pickle.load(open(self.vector_file))
+        
+        with open('degrees.txt','r') as fr:
+            lines = fr.readlines()
+            for item in lines:
+                self.degreedic.append(item.strip().decode('utf-8'))
+
+        self.major_string = ''
+        self.majortoNumDic = {}
+        self.numtoMajorDic = {}
+
+        with open('major_v1.txt') as fr:
+            for item in fr.readlines():
+                major_list = item.split(' ')
+                self.majortoNumDic[major_list[0]] = major_list[1].strip()
+
+        with open('major_v2.txt') as fr:
+            for item in fr.readlines():
+                major_list = item.split(' ')
+                self.numtoMajorDic[major_list[0]] = major_list[1].strip()
+                self.major_string = self.major_string + item.strip().decode('utf-8')+' '
+        self.major2vecDic = {}
+
+        for key in self.majortoNumDic:
+            major_vector = np.zeros((1,50))
+            major_list = jieba.cut(key)
+            w2v_major = self.word2vec(major_list)
+            for vec in w2v_major:
+                major_vector += np.array(vec)
+            self.major2vecDic[key] = major_vector
+        
+        
+        self.mdic= []
+        with open('majordic.txt') as fr:
+            for item in fr:
+                self.mdic.append(item.strip())
+
+        self.linelist = []
+
+    def word2vec(self,w_list):
+        w2vlist = []
+        for word in w_list:
+            if self.word2vec_dict.get(word,-1) != -1:
+                w2vlist.append(self.word2vec_dict[word])
+        return w2vlist
+
+    # 将段落分句
+    def cutlines(self,string):
+        lineslist = re.split(u'[。；;.\t\r\n]',string.strip())
+        self.linelist = [ item for item in lineslist if len(item)>2 ]
+        return self.linelist
+
+    # 抽取学历信息，在每句话中查找
+    def regular_degree(self,string):
+        linelist = self.cutlines(string)
+        for item in linelist:
+            if u'学历' in item or u'学位' in item or u'以上' in item:
+                for degree in self.degreedic:
+                    if degree in item:
+                        return degree
+        return 0
+
+    # 抽取专业信息
+    def regular_major2(self):
+        for item in self.linelist:
+            if u"专业" in item:
+                for mword in jieba.cut(item):
+                    print mword
+                    if mword in self.mdic:
+                        return mword
+                    else:
+                        print "not in mdic"
+        return 0
+
+
+    # 抽取最低工作经验年限
+    def regular_exp(self,string):
+        yeardic = {u'半':0.5,u'一':1,u'二':2,u'三':3,u'四':4,u'五':5,u'六':6,u'七':7,u'八':8,u'九':9,u'十':10}
+        if u'年以上' in string or u'年或以上' in string:
+            strings = string.decode('utf-8')
+            strings.replace(u' ','')
+            linelist = self.cutlines(strings)
+            for line in linelist:
+                pos = line.find(u'年以上')
+                if pos == -1:
+                    pos = line.find(u'年或以上')
+                if pos != -1:
+                    if not re.search(u'\d',line[pos-2:pos-1]):
+                        if re.search(u'\d',line[pos-1:pos]):
+                            if line[pos-2:pos-1] == '-':
+                                return line[pos-3:pos-2]
+                            else:
+                                return line[pos-1:pos]
+                        else:
+                            if yeardic.get(line[pos-1:pos],-1) != -1:
+                                return yeardic[line[pos-1:pos]]
+                    else:
+                        return line[pos-2:pos]
+        return 0
+
+
+
+    # 余弦判断两个向量相关程度
+    def cosine(self,vec1,vec2):
+        vec1 = np.array(vec1)
+        vec2 = np.array(vec2)
+        absx = np.linalog.norm(vec1)
+        absy = np.linalog.norm(vec2)
+        sim = 0
+        if absx>0 and absy>0:
+            sim = sum(vec1*vec2)/(absx*absy)
+        return sim
+                
+
+    # 抽取性别要求
+    def regular_sex(self,string):
+        lines = self.cutlines(string)
+        for line in lines:
+            if re.search(u'[男女]|性别',line):
+                if line.find(u'性别不限') != -1:
+                    return 0
+                elif line.find(u'男')!=-1:
+                    if line.find(u'女')!=-1:
+                        return 0
+                    else:
+                        return 1
+                elif line.find(u'女')!=-1:
+                    return 2
+        return 0
+
+    # 抽取工作经验要求
+    def regular_major(self,string):
+        for mline in self.linelist:
+            pos = item.find('专业')
+            if pos!=-1:
+                pos1 = mline.find(u'：')
+                pos2 = mline.find(u'学历')
+                if pos1 != -1:
+                    mline = mline[max(0,pos1):min(len(mline),pos)]
+                if pos2 != -1 and pos2<pos:
+                    mline = mline[max(0,pos2):min(len(mline),pos)]
+                elif pos2>pos:
+                    mline = mline[0:min(len(mline),pos2)]
+                else:
+                    mline = mline[max(0,pos-36):min(len(mline),pos)]
+                seglist = jieba.cut(mline)
+                m2vlist = self.worttovec(seglist)
+                line_vector = np.zeros((1,50))
+                line_vector_scale = []
+                for vec in m2vlist:
+                    line_vector = line_vector + np.array(vec)
+                line_vector = np.ndarray.tolist(line_vector)[0]
+                
+                for i in xrange(50):
+                    line_vector[i] = -1+2(line_vector[i]-self.rangdic[str(i+1)][0])/(self.rangdic[str(i+1)][1]-self.rangdic[str(i+1)][0])
+                line_vector_scale.append(line_vector)
+                
+                y = [1]
+                p_label,p_acc,p_val = predict(y,line_vector_scale,self.m,'-b 1')
+                if p_pabel[0] == 1:
+                    mseglist = list(jieba.cut(mline))
+                    for item in mseglist:
+                        if len(item)>1 and item in self.mdic:
+                            mlist.append(item)
+                    m2vlist = self.wordtovec(mlist)
+                    countdic = {}
+                    if m2vlist:
+                        for  i in range(len(m2vlist)):
+                            maxtmp = 0
+                            for key in self.major2vecDic:
+                                sim = self.cosine(m2vlist[i],self.major2vecDic[key][0])
+                                if sim >maxtmp:
+                                    maxtmp = sim
+                                    keyp = key
+                            label = self.numtoMajorDic[self.majortoNumDic[keyp]]
+                            countdic[label] = countdic.get(label,0)+1
+                        majorsort = sorted(countdic.items(),key = lambda x:x[1],reverse = True)
+                        if len(majorsort)<2:
+                            return  majorsort[0][0]
+                        else:
+                            return majorsort[0][0]+'\t'+majorsort[1][0]
+            return 0
+    
+    def regular_age(self,string):
+        pos = string.find(u'岁')
+        if pos!=1:
+            strings = string[max(0,pos-8):min(len(string),pos+5)]
+            num = re.findall(u'\d{2,3}',strings)
+            if len(num) >= 2:
+                minage,maxage = min(num),max(num)
+            elif len(num)==1:
+                if strings.find(u'以上') != -1:
+                    minage,maxage =  num[0],100
+                else:
+                    minage,maxage = 0,num[0]
+            else:
+                minage,maxage = 0,100
+            return minage,maxage
+        return 'Null','Null'
+ 
+
+    def extr_req(self,string):
+        reqstr = []
+        stoplist = ['IF','ENDIF',u'任职要求',u'岗位要求',u'职位要求',u'能力要求',u'以上学历',u'本科以上学历',u'专科以上学历',u'任职资格',u'工作要求',u'职位说明',u'工作内容',u'薪酬福利',u'待遇',u'联系电话']
+        reqstring = ''
+        reqline = self.cutlines(string)
+        line_vector_scale = []
+        for rline in reqline:
+            seglist = jieba.cut(rline)
+            m2vlist = self.wordtovec(seglist)
+            line_vector = np.zeros((1,50))
+            for vec in m2vlist:
+                line_vector += np.array(vec)
+            line_vector = np.ndarray.tolist(line_vector)[0]
+            for i in range(50):
+                line_vector[i] = -1+2*(line_vector[i]-self.rangdic_req[str(i+1)][0])/self.rangdic_req[str(i+1)][2]
+            line_vector_scale.append(line_vector)
+            y = [1]*len(line_vector_scale)
+            p_label,p_acc,p_val = predict(y,line_vector_scale,self.mq,'-b 1')
+            print "label",p_label
+            temp = []
+            for i in range(len(reqline)):
+                isFind = re.search(u'任职条件'|u'任职要求'|u'相关要求'|u'需求描述'|u'工作要求'|u'任职资格'|u'能力要求'|u'岗位要求'|u'岗位素质及要求'|u'报名条件'|u'岗位职责',reqline[i])
+                if isFind:
+                    p_label[i] = 1
+                if i>0 and i<len(reqline)-1 and p_label[i-1] == 0 and p_label[i+1] ==0 and not isFind:
+                    p_label[i] = 0
+                if i>1 and (p_label[i-1]==1 and p_label[i-2]==1) and re.search(u'^[2-8]',reqline[i].strip()):
+                    p_label[i] = 1
+                if i>0 and (not isFind and len(reqline)<=6):
+                    p_label[i] = -1
+            for i in range(len(reqline)):
+                print str(p_label[i])+reqline[i]
+                if p_label[i] == 1:
+                    temp.append(reqline[i])
+                if (i<len(reqline)-2 and p_label[i+1]==0 and p_label[i+2]==0) or (i<len(reqline)-1 and p_label[i+1] ==-1):
+                    if len(reqstr)<len(temp):
+                        reqstr = temp
+                    temp = []
+            if len(reqstr)<len(temp):
+                reqstr = temp
+            for item in reqstr:
+                reqstring += item+' '
+            reqstring = reqstring.replace(u'#',u'_').replace(u'&',u'_')
+        rstlist = skill.Skill(reqstring).split()
+        rst = " "
+        for i in rstlist:
+            if i not in stoplist and len(i)>1 and not re.search('\(|性别\专业|薪酬\条件',i):
+                rst = rst + i + ' / '
+        print "rst",rst
+        print "reqstr",reqstr
+        return reqstr,rst
+
+
+    def TFIDF(self,string):
+        tags = []
+        jieba.enable_parallel(10)
+        for item in string:
+            tags.append(jieba.analyse.extract_tags(item,10))
+        return tags
+
+
+    def processing(self,string):
+        string = string.decode('utf-8')
+        sexed = {0:'性别不限',1:'男',2:'女'}
+        result = {}
+        result[u'sex'] = sexed[self.regular_sex(string)]
+        result[u'age'] = self.regular_age(string)
+        result[u'degree'] = self.regular_degree(string)
+        result[u'专业'] = self.regular_major2() 
+        result[u'req'] = self.regular_exp(string)
+
+        for k,v in result.items():
+            print "{}:{}".format(k,v)
+        return result
+
+
+if __name__ == "__main__":
+    file_name = './jd_test_input.txt'
+    test = JD_extr()
+    string = ' '.join(open(file_name).readlines())
+    print "origin:",string
+    test = test.processing(string)
+    print test
+

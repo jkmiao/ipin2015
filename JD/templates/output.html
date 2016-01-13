@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>JD解析结果演示</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<link href="{{ static_url("style.css") }}" type="text/css" rel="stylesheet" />
+	<link rel="stylesheet" href="http://cdn.amazeui.org/amazeui/2.4.0/css/amazeui.min.css" />
+</head>
+<body>
+	<div class="am-nav am-topbar">
+		<h1 class="am-active">企业招聘信息解析结果演示</h1>
+	</div>
+	<div class="am-g ">
+
+		<div class="am-u-sm-6 am-u-sm-centered">
+			<h2>原文</h2>
+			<textarea rows="20" cols="100">
+				{% for line in source.split('\n') %}{{ line }}{% end %}
+			</textarea>
+		</div>
+		<br/>
+
+		<div class="am-u-sm-6 am-u-sm-centered" >
+			<h2>去除公司简介并抽取相关重要信息结果</h2>
+			<textarea rows="15" cols="100" name="OutStr">
+                {{ result }}
+			</textarea>
+		</div>
+		<br/>
+		<div class="am-u-sm-6 am-u-sm-centered">
+			<button class="am-u-sm-3 am-btn am-btn-success" onclick="javascript:history.go(-1)" title="返回">返回</button> 
+		</div>
+		<p><br /></p>
+	</div>
+	<script src="http://cdn.amazeui.org/amazeui/2.4.0/js/amazeui.min.js"></script>
+</body>
+</html>
+
+
+

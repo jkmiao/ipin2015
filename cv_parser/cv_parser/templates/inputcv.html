@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" >
+	<title>html-cv解析demo</title>
+	<link rel = "stylesheet" href="http://cdn.amazeui.org/amazeui/2.4.0/css/amazeui.min.css">
+	<link rel = "icon" href="./head.ico" >
+
+	<script>
+		function get_result(){
+			document.getElementById("res_hint").innerHTML='<div class="am-form-label am-active">'+'正在生成结果，请稍等...'+'</div>';
+			return true
+		}
+	</script>
+</head>
+<body>
+	<div class="am-topbar">
+		<h1 class="am-active"> html-cv解析在线演示</h1>
+	</div>
+	<div class="am-g">
+		<div class="am-u-sm-10 am-u-sm-centered">
+			<div class="am-intro-left am-active" style="height:150px">
+				<label ><em>使用说明</em></label>
+				<p class="am-serif">输入简历地址url或上传下载好的html文件，再点击提交，可获得cv解析结果。</p>
+                <p>
+                    <a href="http://jianli.58.com/" title="cv解析" target="_blank"> 58同城简历</a> |
+                    <a href="http://jianli.51job.com/gaoxiao/" title="cv解析" target="_blank"> 51job简历</a> |
+                    <a href="http://zhaopin.com" title="智联招聘" target="_blank"> 智联招聘(can not find yet!)</a> 
+                </p>
+			</div>
+
+			<form class="am-form-inline" role="form" action="/cvparser" enctype="multipart/form-data" method="post" style="text-align:center">
+				<label>简历url(only):</label>
+				<input class="am-form-field am-radius" type="url" name="source" style="width:60%" placeholder="input url here" autofocus="True" value={{source}}> </input>
+                <input type="file" name="cvfile" accept="text/html" title="或上传html文件" /></br>
+				<button type="submit" onclick="get_result()" class="am-btn am-btn-primary" value="提交">submit</button>
+			</form>
+		</div>
+	</div>
+    <script type="text/javascript" src="http://cdn.amazeui.org/amazeui/2.4.0/js/amazeui.min.js"></script>
+</body>
+</html>

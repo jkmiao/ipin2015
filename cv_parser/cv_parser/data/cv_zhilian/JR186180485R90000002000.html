@@ -1,0 +1,640 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=7" />
+    <title>智联简历</title>
+    <link href="http://img00.zhaopin.cn/2012/css/rd/common.css" rel="stylesheet" type="text/css" />
+    <link href="http://img00.zhaopin.cn/2012/css/rd/rdnew_2.css?version=20150713" rel="stylesheet" type="text/css" />
+    <link href="http://img00.zhaopin.cn/2012/css/rd/rdnewlayer.css" rel="stylesheet"
+        type="text/css" />
+    <link href="http://img00.zhaopin.cn/2012/css/ui/jquery.zlzp.popupdiv.css" type="text/css"
+        rel="stylesheet" />
+    <link href="http://img01.zhaopin.cn/2014/rd2/css/feedbackD.css?version=20150915" type="text/css"
+          rel="stylesheet" />
+    <link href="/css/sendinfo.css" type="text/css" rel="stylesheet" />
+    <style media="print">
+        .resume-preview{
+            color:#000;
+        }
+        .resume-body-left{
+            width:auto;
+        }
+        .resume-preview-left {
+            box-shadow:none;
+            border:none;
+        }
+        .resume-preview-right,.nav-body-top
+        {
+            display:none;
+        }
+        h3 {
+            border-bottom:2px solid #ccc;
+        }
+        .similar-resume{
+            display:none
+        }
+
+    </style>
+ 
+</head>
+<body>
+    <div class="resume-preview clearfix">
+        
+
+
+<style type="text/css">
+    .posR { position: relative; border: 1px solid #ccc; height: 32px; }
+    .nameMatching, .nameMatchings { line-height: 32px; font-size: 12px; float: left; font-weight: normal; }
+    .nameMatching { margin-left: 28px; background: url(http://img02.zhaopin.cn/2012/img/rd/Pmatching.png) no-repeat 7px 7px; padding-left: 50px; height: 22px; padding-top: 10px; }
+    .nameMatching .star { width: 50px; height: 9px; display: block; font-size: 0; background: url(http://img02.zhaopin.cn/2012/img/rd/matching-mark.png) no-repeat; }
+    .nameMatching .star5 { background-position: 0 0; }
+    .nameMatching .star4 { background-position: 0 -9px; }
+    .nameMatching .star3 { background-position: 0 -18px; }
+    .nameMatching .star2 { background-position: 0 -27px; }
+    .nameMatching .star1 { background-position: 0 -36px; }
+    .nameMatching .star0 { background-position: 0 -45px; }
+    .nameMatchings { cursor: pointer; margin-left: 10px; background: url(http://img02.zhaopin.cn/2012/img/rd/Pcell.png) no-repeat 0 7px; height: 22px; width: 35px; }
+    /*给我推荐更多相似人才 按钮*/
+    .acceptInvite { width: 100%; overflow: hidden; }
+    .preview3 { float: left; }
+    .preview3 span { font-size: 14px; }
+    .moreRecom { float: left; width: 155px; height: 25px; background-color: #ff6600; border-radius: 3px; margin-left: 5px; margin-top: 25px; font: 12px/25px '微软雅黑'; color: #fff; text-align: center; cursor: pointer; }
+    .fbtips { width: 748px; background-color: #fef8e0; line-height: 28px; border: 1px #eeebde solid; border-bottom: 1px #ffd138 solid; padding-left: 20px; font-size: 12px; color: #777; letter-spacing: 1px; height: 100%; overflow: hidden; }
+    .fbtips span { float: left; }
+    .fbtips span.textsty { color: #222; font-weight: bold; }
+    .fbtips span.textstyone { color: #222; font-weight: bold; width: 180px; float: left; word-wrap: break-word; }
+    /*新增css zhaoqi*/
+    .refuseReason { border: 2px solid #3aba13; -moz-border-radius: 3px; -webkit-border-radius: 3px; border-radius: 3px; padding: 8px 13px; display: inline-block; max-width: 206px; line-height: 20px; font-size: 14px; line-height: 22px; display: none; background-color: #fff; position: absolute; left: 388px; top: 65px; width: expression(this.width>206?"206":this.width); }
+    .aRefuse { height: 58px; line-height: 58px; float: left; margin-left: -30px; }
+    .summary-bottom { position: relative; }
+    /*新增css zhaoqi*/
+    /*橄榄枝二期 底部更多人才推荐 zhaoqi*/
+    .mtContent { float: left; margin-left: 24px; margin-bottom: 24px; position: relative; }
+    .moreTalented { margin-top: 30px; background-color: #fff; border: 1px solid #e1e1e1; box-shadow: 0px 0px 1px 1px #e7e7e7; box-radius: 3px 3px 3px 3px; }
+    .moreTalented ul li .mtContent { display: inline-block; width: 344px; height: 162px; background-color: #eff9fe; border: 1px solid #d3e2ff; }
+    .mtLeft { height: 129px; width: 93px; border: 1px solid #dddddd; float: left; margin: 15px 16px 0 16px; }
+    .mtRight { float: left; margin-top: 15px; }
+    .mtRight .sendOlive { width: 120px; height: 30px; display: inline-block; font-size: 14px; text-align: center; line-height: 30px; background-color: #2f9ddf; border-radius: 3px; color: #fff; margin-right: 18px; }
+    .mtRight p { color: #7d7d7d; margin-top: 10px; }
+    .mtRight .mtJob, .mtRight em { color: #000; font-style: normal; }
+    .mtRight h3 { margin: 0; padding: 0; height: 18px; line-height: 18px; }
+    .mtRight .alreadySend { background-color: #c2c2c2; }
+    .mtCheckAll { font-size: 14px; color: #315aaa; text-align: center; margin-bottom: 24px; }
+    .moreTalented .mtTitle { height: 50px; line-height: 50px; margin-left: 24px; font-size: 16px; font-family: "Microsoft Yahei"; }
+    .mtChat { margin-left: 10px; vertical-align: bottom; }
+    .msTips {border: 1px solid #ffc505;height: 30px;line-height: 30px;padding: 0 5px;background-color: #fef8e0;width: 125px;position: relative;z-index:100;}
+    .tipsCon {position: absolute;padding-top: 4px;z-index:100;}
+    .tipsCon img { position: absolute; left: 64px; top: 0px;z-index:101 }
+    .feedbackD_tips02 span,.feedbackE_tips02 span { color: #ec6100; }
+    .feedbackD_tips02 .tips02_num,.feedbackE_tips02 .tips02_num { color: #ec6100; }
+    .mtChatCon{position:relative;}
+    #kp_num { display: none; }
+    #kp_panel{zoom:1}
+</style>
+<style media="print">
+    .noprint { display: none; }
+</style>
+
+<script type="text/javascript">
+    function showMatchDesc(id, rootcompanyId, name) {
+        $(".MatchingDescriptionBtn").match({
+            url: "http://rd2.zhaopin.com/s/resuadmi/resumematchingdescription.asp",
+            type: "Get",
+            data: { id: id, rootcompanyId: rootcompanyId, name: name },
+            callback: "matchingcallback"
+        });
+    }
+</script>
+<link type="text/css" rel="stylesheet" href="http://img00.zhaopin.cn/2012/css/rd/rdmatching.css">
+
+<div class="resume-body-left">
+    <div class="resume-preview-head" id="resumeContentHead">
+        <img alt="" src="http://img02.zhaopin.cn/2012/img/rd/logo.png" width="133" height="71"
+            align="right" class="headerlogo" />
+            <div class="intro-span-right">
+                还有<span>0</span>份简历下载余额
+            </div>
+            <input type="hidden" name="resumeDownloadNum" id="resumeDownloadNum" value="0" />
+            <div class="resume-preview-title">
+                <span class="resume-preview-list">简历名称： <strong id="resumeName"></strong></span>
+                <br />
+                <span class="resume-preview-list">期望从事职业： <strong id="desireIndustry"></strong></span>
+                <br />
+                <span class="resume-preview-list">简历更新时间： <strong id="resumeUpdateTime"></strong>
+                </span>
+            </div>
+            <div class="resume-preview-center">
+<form action="/ResumePreview/resume/_Detail?extId=JR186180485R90000002000&amp;version=1&amp;gltype=0" data-ajax="true" data-ajax-mode="replace" data-ajax-success="changeLanguageTag" data-ajax-update="#resumeDetail" id="frmResumeDetail" method="post">                    <div class="center-left">
+                        <div class="resume-left-tips">
+                            <div class="resume-left-tips-span">
+                                <span class="resume-left-tips-id">ID:JR186180485R90000002000</span>
+                            </div>
+                            <div class="resume-left-tips-span tips-span-right">
+                                    <span class="resume-left-tips-right"><a href="http://rd2.zhaopin.com/s/resusech/searchUserResume.asp?um_id=JR186180485" target="_blank">查看所有简历</a></span>
+                            </div>
+                        </div>
+                    </div>
+                    <!--<div class="center-right">你可能对这些简历感兴趣</div>-->
+                    <input type="hidden" value="Chinese" name ="language" id="language" />
+                    <input type="hidden" value="Chinese" name ="anotherLanguage" id="anotherLanguage" />
+</form>            </div>
+    </div>
+
+<div id="resumeDetail">
+    <div class="resume-preview-main">
+        <div class="resume-preview-left">
+            <div id="resumeContentBody">
+                <div class="resume-preview-main-title posR">
+                        <div class="main-title-fl fc6699cc" style="height: 54px;">
+                            个人信息
+                        </div>
+                </div>
+                <div class="summary">
+                    <a target="_blank" href="http://my.zhaopin.com/pic/2015/6/23/4550CC04C50F4085B225DE6A8A9E658F.jpg">
+                        <img alt="" src="http://my.zhaopin.com/pic/2015/6/23/4550CC04C50F4085B225DE6A8A9E658F.jpg" width="93" height="131" align="right" class="headerImg" /></a>
+                    <div class="summary-top">
+                        <span>男&nbsp;&nbsp;&nbsp;&nbsp;30岁(1985年6月)&nbsp;&nbsp;&nbsp;&nbsp;6年工作经验&nbsp;&nbsp;&nbsp;&nbsp;本科&nbsp;&nbsp;&nbsp;&nbsp;未婚</span>
+                        <br />
+                        现居住地：大连  | 户口：大连 | 中共党员(含预备党员)
+                    </div>
+                    <div class="summary-bottom">
+                        <!--普通简历显示联系方式-->
+                        <!--end显示联系方式-->
+                        <!--橄榄枝-->
+                        <!--end橄榄枝-->
+                            <div class="preview-table-body-add">如需联系方式请下载该简历</div>
+                    </div>
+                </div>
+                    <div class="resume-preview-all">
+                        <h3 class="fc6699cc">求职意向</h3>
+                        <div class="resume-preview-top">
+                            <table cellpadding="0" cellspacing="0">
+                                    <tr valign="top">
+                                        <td width="85" align="right">期望工作地区：</td>
+                                        <td>大连、北京</td>
+                                    </tr>
+                                    <tr valign="top">
+                                        <td width="85" align="right">期望月薪：</td>
+                                        <td>6001-8000元/月</td>
+                                    </tr>
+                                    <tr valign="top">
+                                        <td width="85" align="right">目前状况：</td>
+                                        <td>我目前在职，正考虑换个新环境（如有合适的工作机会，到岗时间一个月左右）</td>
+                                    </tr>
+                                    <tr valign="top">
+                                        <td width="85" align="right">期望工作性质：</td>
+                                        <td>全职</td>
+                                    </tr>
+                                    <tr valign="top">
+                                        <td width="85" align="right">期望从事职业：</td>
+                                        <td>公关总监、区域销售总监、渠道/分销经理/主管、市场策划/企划经理/主管、市场总监</td>
+                                    </tr>
+                                    <tr valign="top">
+                                        <td width="85" align="right">期望从事行业：</td>
+                                        <td>零售/批发、广告/会展/公关、媒体/出版/影视/文化传播、物业管理/商业中心、贸易/进出口、政府/公共事业/非盈利机构、礼品/玩具/工艺美术/收藏品/奢侈品、耐用消费品（服饰/纺织/皮革/家具/家电）、计算机软件、IT服务(系统/数据/维护)、通信/电信运营、增值服务</td>
+                                    </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="resume-preview-all">
+                        <h3 class="fc6699cc">自我评价</h3>
+                        <div class="resume-preview-dl rd-break">1、责任心强，踏实肯干 <br />2、善于市场公关 <br />3、善于策划营销活动、企划 <br />4、具有组织和管理能力 <br />5、团队合作能力 <br />给我一次机会，给我一个舞台，我会为贵公司贡献自己的一份力量！</div>
+                    </div>   
+
+                    <div class="resume-preview-all workExperience">
+                        <h3 class="fc6699cc">工作经历</h3>
+                            <h2>2013.12 - 至今&nbsp;&nbsp;驱逐舰（大连）信息技术有限公司/安易讯科技（大连）有限公司&nbsp;&nbsp;（1年9个月）</h2>
+                            <h5>企划部经理、区域总经理、事业部经理 | 6001-8000元/月</h5>
+                            <div class="resume-preview-dl">
+                                互联网/电子商务 | 企业性质：民营 | 规模：20-99人
+                            </div>
+                            <div class="resume-preview-dl">
+                                <table cellpadding="0" cellspacing="0">
+                                    <tr valign="top">
+                                        <td width="60">工作描述：</td>
+                                        <td>企划部经理<br />        驱逐舰公司和安易讯公司为一家公司团队，互联网企业，主营手机APP、学生手机、智能穿戴类产品、智能家居等。任企划部经理，主营负责：一、企划部组建和管理；二、活动策划和执行；三、产品广宣；四、招商会企划；五、媒体宣传（线上媒体和线下媒体,网络推广、微信公众号、网络软文炒作等）；六、政府公关（科协、精神文明办等）；七、异业联盟（大连儿童产品联盟会员单位）。<br />区域总经理、事业部经理<br />      一、运营商（联通、电信、移动）增值业务合作洽谈（项目洽谈、项目评审、项目接入）和营销推广；二、按公司产品划分，创建各产品事业部，人员招聘、工作细化考核、员工培训、招商会、产品销售渠道（线下销售渠道和线上电商渠道）建立等，代理商店面、卖场、直营体验店宣传管理，绿大大学霸产品上市推广。</td>
+                                    </tr>
+                                </table>
+                            </div>    
+                            <h2>2013.04 - 2013.11&nbsp;&nbsp;大连百捷星辰展览发展有限公司&nbsp;&nbsp;（7个月）</h2>
+                            <h5>营销策划部经理 | 4001-6000元/月</h5>
+                            <div class="resume-preview-dl">
+                                广告/会展/公关 | 企业性质：民营 | 规模：20-99人
+                            </div>
+                            <div class="resume-preview-dl">
+                                <table cellpadding="0" cellspacing="0">
+                                    <tr valign="top">
+                                        <td width="60">工作描述：</td>
+                                        <td>公司和哈尔滨地区一家公司合作，建立连精品楼盘东北（哈尔滨）营销中心，主营负责项目招商和运营。</td>
+                                    </tr>
+                                </table>
+                            </div>    
+                            <h2>2012.10 - 2013.03&nbsp;&nbsp;北京正堂华彩进出口贸易有限公司&nbsp;&nbsp;（5个月）</h2>
+                            <h5>市场策划/企划经理/主管 | 4001-6000元/月</h5>
+                            <div class="resume-preview-dl">
+                                医疗设备/器械 | 企业性质：民营 | 规模：20-99人
+                            </div>
+                            <div class="resume-preview-dl">
+                                <table cellpadding="0" cellspacing="0">
+                                    <tr valign="top">
+                                        <td width="60">工作描述：</td>
+                                        <td>北京正堂华彩进出口贸易有限公司，欧百特个人随身氧中国总代理，面向全国招商。任企划部经理，主要负责：一、企划部团队建设和管理（文案、平面、网络推广）；二、CI建设（公司文化、VI系统建设）；三、招商企划方面（1、招商推广资料：招商项目说明书【ppt版、word版、PDF版】；2、产品宣传资料【产品说明书、产品宣传折页、产品宣传海报、产品宣传DM】）四、项目营销企划（招商推广会项目方案策划、终端销售模式策划）五、网络推广渠道建设和管理（官网推广和维护、5个招商网站的建设和SEO优化推广、产品品牌网络维护和推广）六、公司对外公关媒体宣传（积累了自己更多媒体人脉资源，多是全国性媒体【全国性地方电视台、全国多个分众媒体资源、杂志资源】）。</td>
+                                    </tr>
+                                </table>
+                            </div>    
+                            <h2>2012.04 - 2012.10&nbsp;&nbsp;亿中意家居用品（大连）有限公司&nbsp;&nbsp;（6个月）</h2>
+                            <h5>企划部 | 企划部经理 | 4001-6000元/月</h5>
+                            <div class="resume-preview-dl">
+                                耐用消费品（服饰/纺织/皮革/家具/家电） | 企业性质：民营 | 规模：20-99人
+                            </div>
+                            <div class="resume-preview-dl">
+                                <table cellpadding="0" cellspacing="0">
+                                    <tr valign="top">
+                                        <td width="60">工作描述：</td>
+                                        <td>亿中意家居用品（大连）有限公司，主营进口高档儿童家具，任企划部经理，主要负责：一、公司对外公关媒体宣传，积累了自己的媒体资源人脉（各个报纸、杂志、电视台、广告代理的传媒公司、公关公司、各分众媒体、网络公司等）；二、市场活动策划、执行（品牌营销活动、产品营销活动、主办或赞助的市场活动、会员俱乐部活动等）；三、网络品牌营销管理；四、公司合作渠道资源开发</td>
+                                    </tr>
+                                </table>
+                            </div>    
+                            <h2>2009.11 - 2011.12&nbsp;&nbsp;香港花都国际&#183;北京蝶恋花风情布艺有限公司&nbsp;&nbsp;（2年1个月）</h2>
+                            <h5>市场部 | 市场部经理 | 6001-8000元/月</h5>
+                            <div class="resume-preview-dl">
+                                耐用消费品（服饰/纺织/皮革/家具/家电） | 企业性质：民营 | 规模：20人以下
+                            </div>
+                            <div class="resume-preview-dl">
+                                <table cellpadding="0" cellspacing="0">
+                                    <tr valign="top">
+                                        <td width="60">工作描述：</td>
+                                        <td>香港花都国际&#183;北京蝶恋花布艺风情有限公司，经营香港中高档服装的零售兼批发，任北京分公司市场部经理，负责管理北京地区店面的经营管理，以及新渠道的开发。</td>
+                                    </tr>
+                                </table>
+                            </div>    
+                            <h2>2009.03 - 2009.11&nbsp;&nbsp;北京盛世至尊投资有限公司&nbsp;&nbsp;（8个月）</h2>
+                            <h5>销售部 | 销售经理 | 2001-4000元/月</h5>
+                            <div class="resume-preview-dl">
+                                广告/会展/公关 | 企业性质：民营 | 规模：20-99人
+                            </div>
+                            <div class="resume-preview-dl">
+                                <table cellpadding="0" cellspacing="0">
+                                    <tr valign="top">
+                                        <td width="60">工作描述：</td>
+                                        <td>北京盛世至尊投资有限公司，至尊传媒—TOP中国顶级酒店体验营销联盟，销售部，销售经理，负责媒体销售和方案撰写，媒体面向高端商品、奢侈品和高端私人服务，任职期间联系沟通了很多高端品牌和高端私人服务行业，取得较好的业绩</td>
+                                    </tr>
+                                </table>
+                            </div>    
+                    </div>
+
+                    <div class="resume-preview-all">
+                        <h3 class="fc6699cc">项目经历</h3>
+                            <h2>2014.08 - 2015.06&nbsp;&nbsp;绿网智学、绿大大学霸等系列产品招商加盟</h2>
+                            <div class="resume-preview-dl">
+                                <table cellpadding="0" cellspacing="0">
+
+
+                                        <tr valign="top">
+                                            <td width="60">责任描述：</td>
+                                            <td>企划部经理、事业部经理，销售团队组建、招商会、渠道开拓</td>
+                                        </tr>
+
+                                        <tr valign="top">
+                                            <td width="60">项目描述：</td>
+                                            <td>绿网智学孩子成才助学系统、学生手机（A1、A5、S6）、绿网智学校讯通版、儿童智能手表、智能安全扣、智能穿戴手表（A5、S5、S8）、智能家居等产品的市场推广、招商和销售。<br />绿大大学霸上市的计划书、推广炒作、销售，绿大大商城的推广等。</td>
+                                        </tr>  
+                                </table>
+                            </div>
+                            <h2>2014.03 - 2015.06&nbsp;&nbsp;运营商项目合作</h2>
+                            <div class="resume-preview-dl">
+                                <table cellpadding="0" cellspacing="0">
+
+
+                                        <tr valign="top">
+                                            <td width="60">责任描述：</td>
+                                            <td>区域总经理，主营负责和运营商的项目洽谈、项目评审、项目接入、项目推广</td>
+                                        </tr>
+
+                                        <tr valign="top">
+                                            <td width="60">项目描述：</td>
+                                            <td>负责项目有：北京联通—手机绿色上网；辽宁联通—手机绿网管家；贵州联通—手机绿网；黑龙江联通—手机绿色上网；香港联通—手机绿色上网；中国电信集团广州教育基地—人人通；辽宁电信—天翼绿网；黑龙江电信—天翼绿网等。</td>
+                                        </tr>  
+                                </table>
+                            </div>
+                            <h2>2009.11 - 2011.12&nbsp;&nbsp;台湾蝶恋花品牌产品品牌加盟招商和店面管理</h2>
+                            <div class="resume-preview-dl">
+                                <table cellpadding="0" cellspacing="0">
+
+
+                                        <tr valign="top">
+                                            <td width="60">责任描述：</td>
+                                            <td>市场部经理，主管品牌加盟招商和北京区店面，个人负责招商区域：北京、河北、山西、天津</td>
+                                        </tr>
+
+                                        <tr valign="top">
+                                            <td width="60">项目描述：</td>
+                                            <td>台湾蝶恋花品牌产品主要包括中高档女装（消费年龄段为：25-45岁女性）和家居布艺产品，为客户提供蝶恋花品牌的加盟资质、蝶恋花系列产品的供应、客户店面选址、经营管理和营销方案等一系列的培训和指导。</td>
+                                        </tr>  
+                                </table>
+                            </div>
+                            <h2>2009.03 - 2009.11&nbsp;&nbsp;TOP中国顶级酒店体验营销联盟</h2>
+                            <div class="resume-preview-dl">
+                                <table cellpadding="0" cellspacing="0">
+
+
+                                        <tr valign="top">
+                                            <td width="60">责任描述：</td>
+                                            <td>媒体销售兼方案策划</td>
+                                        </tr>
+
+                                        <tr valign="top">
+                                            <td width="60">项目描述：</td>
+                                            <td>1.至尊传媒与台湾洛克马健身器材系列产品的推广<br />2.至尊传媒与万国（北京）国际俱乐部的合作<br />3.至尊传媒与台湾法蓝瓷系列产品的推广<br />4.至尊传媒与丹纽&#183;瑞贝卡新加坡礼服定制中心的合作<br />5.至尊传媒与意大利罗马世家的合作<br />6.至尊传媒与琉璃工房的合作<br />7至尊传媒与巴厘岛温泉商务会馆的合作</td>
+                                        </tr>  
+                                </table>
+                            </div>
+                            <h2>2007.09 - 2007.12&nbsp;&nbsp;奥利奥营销尖兵特训团活动</h2>
+                            <div class="resume-preview-dl">
+                                <table cellpadding="0" cellspacing="0">
+
+
+                                        <tr valign="top">
+                                            <td width="60">责任描述：</td>
+                                            <td>代表学校组队参加卡夫公司主办的奥利奥营销尖兵特训团活动，活动包括培训、营销活动策划、策划执行—宣传品牌和产品售卖，取得较好的成绩，获得结业实习证书</td>
+                                        </tr>
+
+                                        <tr valign="top">
+                                            <td width="60">项目描述：</td>
+                                            <td>卡夫公司主办的奥利奥营销尖兵特训团活动</td>
+                                        </tr>  
+                                </table>
+                            </div>
+                            <h2>2007.09 - 2008.12&nbsp;&nbsp;“琼林美味”主题餐厅创业计划</h2>
+                            <div class="resume-preview-dl">
+                                <table cellpadding="0" cellspacing="0">
+
+
+                                        <tr valign="top">
+                                            <td width="60">责任描述：</td>
+                                            <td>主要负责营销战略的策划和具体的广告策划内容及美工</td>
+                                        </tr>
+
+                                        <tr valign="top">
+                                            <td width="60">项目描述：</td>
+                                            <td>第七届全国大学生挑战杯创业大赛，创业项目：“琼林美味”主题餐厅创业计划，获全校一等奖，北京市三等奖</td>
+                                        </tr>  
+                                </table>
+                            </div>
+                            <h2>2007.05 - 2008.12&nbsp;&nbsp;欢乐谷北京地区高校市场运作</h2>
+                            <div class="resume-preview-dl">
+                                <table cellpadding="0" cellspacing="0">
+
+
+                                        <tr valign="top">
+                                            <td width="60">责任描述：</td>
+                                            <td>北京欢乐谷北京地区高校市场负责人之一，组建了18所高校的销售网络，并管理此销售网络，并加之拓展新的销售渠道</td>
+                                        </tr>
+
+                                </table>
+                            </div>
+                    </div>
+
+                    <div class="resume-preview-all">
+                        <h3 class="fc6699cc">教育经历</h3>
+                        <div class="resume-preview-dl educationContent">
+2005.09 - 2009.07&nbsp;&nbsp;中国地质大学（北京）&nbsp;&nbsp;市场营销&nbsp;&nbsp;本科<br />
+                        </div>
+                    </div>
+
+
+                    <div class="resume-preview-all">
+                        <h3 class="fc6699cc">证书</h3>
+                            <h2>2003.05&nbsp;&nbsp;大连市优秀学生干部</h2>
+                            <h2>2008.06&nbsp;&nbsp;2008/05&#160;&#160;两会志愿者证书</h2>
+                            <h2>2006.05&nbsp;&nbsp;军训优秀学员</h2>
+                            <h2>2008.11&nbsp;&nbsp;中国地质大学（北京）校优秀学生干部</h2>
+                            <h2>2008.04&nbsp;&nbsp;中国地质大学（北京）校挑战杯科研二等奖</h2>
+                            <div class="resume-preview-dl">
+                                <table cellpadding="0" cellspacing="0">
+                                    <tr valign="top">
+                                        <td width="60">证书说明：</td>
+                                        <td>项目 《博客服务与盈利现状的调查研究》 </td>
+                                    </tr>
+                                </table>
+                            </div>    
+                            <h2>2008.09&nbsp;&nbsp;挑战杯第七届创业大赛北京市三等奖</h2>
+                            <div class="resume-preview-dl">
+                                <table cellpadding="0" cellspacing="0">
+                                    <tr valign="top">
+                                        <td width="60">证书说明：</td>
+                                        <td>项目《琼林美味海南餐饮创业计划》</td>
+                                    </tr>
+                                </table>
+                            </div>    
+                            <h2>2008.12&nbsp;&nbsp;大学英语四级</h2>
+                    </div>
+
+                    <div class="resume-preview-all">
+                        <h3 class="fc6699cc">在校学习情况</h3>
+
+                            <h2>2002.05 曾获 县市级 大连市优秀学生干部</h2>    
+                            <h2>2007.11 曾获 院校级 中国地质大学（北京）校优秀学生干部</h2>    
+                            <h2>2008.10 曾获 县市级 2008年第七届全国大学生挑战杯创业大赛北京市三等奖</h2>    
+                            <div class="resume-preview-dl">
+                                <table cellpadding="0" cellspacing="0">
+                                    <tr valign="top">
+                                        <td width="60">奖项描述：</td>
+                                        <td>《琼林美味海南餐饮创业计划书》</td>
+                                    </tr>
+                                </table>
+                            </div> 
+
+                            <div class="resume-preview-dl">
+                                <table cellpadding="0" cellspacing="0">
+                                    <tr valign="top">
+                                        <td width="60">活动描述：</td>
+                                        <td>1、管理科学与工程070057班长、市场营销074051班团支书，任职期间培养了和同学们的良好关系，锻炼了自己的管理能力和组织能力； <br />2、中国地质大学（北京）人文经管学院学生会权益部部长，人文经管学院学生会副主席，任职期间组织策划和参与了多次校园大型活动，如人文电影文化节，人文经管学院学生代表大学等，锻炼了大型活动的组织策划能力； <br />3、2008/04 两会志愿者 2008年两会召开时，作为社会志愿者服务两会，服务社会，责任于心；</td>
+                                    </tr>
+                                </table>
+                            </div>    
+                    </div>
+
+
+                    <div class="resume-preview-all">
+                        <h3 class="fc6699cc">语言能力</h3>
+                        <div class="resume-preview-dl resume-preview-line-height">
+英语：读写能力熟练 | 听说能力良好<br />
+                        </div>
+                    </div>
+
+
+                    <div class="resume-preview-all">
+                        <h3 class="fc6699cc">兴趣爱好</h3>
+                        <div class="resume-preview-dl">游泳、健身、看书、中国象棋</div>
+                    </div>
+
+
+
+                    <div class="previewLayer11 rd_button smpevent" data-smpaction="downloadresume" data-smpposition="resumedetail"></div>
+            </div>
+<div class="resume-preview-right">
+
+            <div class="resume-preview-button previewLayer11 smpevent" data-smpaction="downloadresume" data-smpposition="resumedetail">
+                <span class="resume-preview-button-span preview-icon11"></span>下载简历</div>
+            <div class="resume-preview-button previewLayer12 smpevent" data-smpaction="savetemporaryresume" data-smpposition="resumedetail">
+                <span class="resume-preview-button-span preview-icon12"></span>暂存简历</div> 
+
+    <a class="similar-button-gray previewLayer_xsjl" style="display:none" target="_blank"><span class="preview-icon_xsjl resume-preview-button-span preview-icon-similar-gray">
+    </span><span id="xsjl_count">相似简历(<img id="xsjldd" src="http://img02.zhaopin.cn/2012/img/rd/xsjldd.gif" />)</span>
+        <span class="new-icon"></span></a>
+    <!--<div class="resume-preview-button previewLayer10">
+        <span class="resume-preview-button-span preview-icon10"></span>返回顶部</div>-->
+</div>
+<div class="back-to">
+</div>
+<div class="szmr_over">
+    <div class="szmr_overts">
+        <div id="subWindowMain" class="tanchuang_main">
+        </div>
+    </div>
+</div>
+<div id="downfile" style="display: none">
+</div>
+        </div>
+    </div>
+</div>
+
+<!--随手聘-->
+<input type="hidden" name="posttype" id="posttype" value="0" />
+<input type="hidden" name="labeltype" id="labeltype" value="0" />
+<input type="hidden" name="positionid" id="positionid" value="0" />
+<!--反馈通D期-->
+<input type="hidden" name="tt_username" id="tt_username" value="童宇" />
+<input type="hidden" name="tt_sourceid" id="tt_sourceid" value="8" />
+
+<input type="hidden" name="resume_id" id="resume_id" value="126026094" />
+<input type="hidden" name="extId" id="extId" value="JR186180485R90000002000" />
+<input type="hidden" name="resume_version" id="resume_version" value="1" />
+<input type="hidden" name="resume_language" id="resume_language" value="1" />
+<input type="hidden" name="resume_Name" id="resume_Name" value="企划部经理 营销策划总监 区域总经理 大区经理 市场部经理 运营总监  策划经理 媒介经理 公关经理&#160;&#160;" />
+<input type="hidden" name="resumeUserId" id="resumeUserId" value="118618048" />
+<input type="hidden" name="currentCompanyName" id="currentCompanyName" value="安徽摩登信息技术有限公司" />
+<input type="hidden" name="currentDepartmentName" value="安徽摩登信息技术有限公司"/>
+<input type="hidden" name="PositionNumber" id="PositionNumber" value="" />
+<input type="hidden" name="gltype" id="gltype" value="0" />
+<input type="hidden" name="GlStatus" id="GlStatus" value="0" />
+
+<input type="hidden" name="ApplyResume" id="ApplyResume" value="" />
+<input type="hidden" name="rootCompanyId" id="rootCompanyId" value="75266984" />
+
+<!-- Trace Data Block Start -->
+<input type="hidden" name="dda_kpi" id="dda_kpi" value="M1" />
+<input type="hidden" name="dda_operatorid" id="dda_operatorid" value="655360722" />
+<input type="hidden" name="dda_companyid" id="dda_companyid" value="75266984" />
+<input type="hidden" name="dda_custom" id="dda_custom" value="" />
+<input type="hidden" name="dda_ownerid" id="dda_ownerid" value="" />
+<input type="hidden" name="dda_cvid" id="dda_cvid" value="JR186180485R90000002000_1" />
+<input type="hidden" name="dda_position" id="dda_position" value="resumedetail" />
+<input type="hidden" name="dda_action" id="dda_action" value="viewdetail" />
+<input type="hidden" name="dda_xtable" id="dda_xtable" value="" />
+<input type="hidden" name="dda_type" id="dda_type" value="cvdownload" />
+<!-- Trace Data Block End   -->
+<a id="fileLink" href="" style="display: none"></a>
+<script type="text/javascript" language="javascript">
+    var desire = document.getElementById("desireIndustry");
+    if (desire != null) {
+        desire.innerHTML = "公关总监、区域销售总监、渠道/分销经理/主管、市场策划/企划...";
+    }
+
+    var resumeName = document.getElementById("resumeName");
+    if (resumeName != null) {
+        resumeName.innerHTML = "企划部经理 营销策划总监 区域总经理 大区经理 市场部经理 ...";
+    }
+
+    var resumeUpdateTime = document.getElementById("resumeUpdateTime");
+    if (resumeUpdateTime != null) {
+        resumeUpdateTime.innerHTML = "2015年09月18日";
+    }
+
+    if (typeof (jobTitleInit) != 'undefined') {
+        jobTitleInit();
+    }
+
+    if (typeof (countKPJL) != 'undefined') {
+        countKPJL();
+    }
+
+    if (typeof (getKPJL) != 'undefined') {
+        getKPJL();
+    }
+</script>
+    
+    <div class="moreTalented noprint" style="display: none;" id="kp_panel">
+        <p class="mtTitle">更多靠谱人才</p>
+        <div class="mtChatCon">
+            <ul>
+            </ul>
+        </div>
+        <div class="mtCheckAll"><a target="_blank" href="#" id="kp_linkall" class="__ga__JobInviteLU_clickViewAll$CV_001">查看全部&gt;&gt;</a></div>
+    </div>
+</div>
+<input type="hidden" name="viewSource" id="viewSource" value="2" />
+<input type="hidden" name="keyword_search" id="keyword_search" value="" />
+<input type="hidden" name="college_search" id="college_search" value="" />
+<input type="hidden" name="company_search" id="company_search" value="" />
+<input type="hidden" name="dda_source" id="dda_source" value="2" />
+
+
+    </div>
+    <div class="editor-layer-add">
+        <div class="editor-layer-icon cvLabelColor1 dev_label_icon_list" dev_classname="cvLabelColor1">
+        </div>
+        <div class="editor-layer-icon cvLabelColor2 dev_label_icon_list" dev_classname="cvLabelColor2">
+        </div>
+        <div class="editor-layer-icon cvLabelColor3 dev_label_icon_list" dev_classname="cvLabelColor3">
+        </div>
+        <div class="editor-layer-icon cvLabelColor4 dev_label_icon_list" dev_classname="cvLabelColor4">
+        </div>
+        <div class="editor-layer-icon cvLabelColor5 dev_label_icon_list" dev_classname="cvLabelColor5">
+        </div>
+        <div class="editor-layer-icon cvLabelColor6 dev_label_icon_list" dev_classname="cvLabelColor6">
+        </div>
+        <div class="editor-layer-icon cvLabelColor7 dev_label_icon_list" dev_classname="cvLabelColor7">
+        </div>
+        <div class="editor-layer-icon cvLabelColor8 dev_label_icon_list" dev_classname="cvLabelColor8">
+        </div>
+        <div class="editor-layer-icon cvLabelColor9 dev_label_icon_list" dev_classname="cvLabelColor9">
+        </div>
+        <div class="editor-layer-icon cvLabelColor10 dev_label_icon_list" dev_classname="cvLabelColor10">
+        </div>
+        <div class="editor-layer-icon cvLabelColor11 dev_label_icon_list" dev_classname="cvLabelColor11">
+        </div>
+        <div class="editor-layer-icon cvLabelColor12 dev_label_icon_list" dev_classname="cvLabelColor12">
+        </div>
+    </div>
+    <script type="text/javascript" src="http://img01.zhaopin.cn/2012/js/jquery-1.6.4.min.js"></script>
+    <script type="text/javascript" src="http://img01.zhaopin.cn/2012/js/zlzp.app.js"></script>
+    <script type="text/javascript" src="http://img01.zhaopin.cn/2012/js/rd/jquery.unobtrusive-ajax.min.js"></script>
+    <script type="text/javascript" src="http://img01.zhaopin.cn/2012/js/ui/jquery.zlzp.popupdiv.js"></script>
+    <script type="text/javascript" src="http://img01.zhaopin.cn/2012/js/ui/jquery.zlzp.popupbase.js"></script>
+    <script type="text/javascript" src="http://img01.zhaopin.cn/2012/js/rd/common.js"></script>
+    <script type="text/javascript" src="http://img01.zhaopin.cn/2012/js/rd/utilscript.js"></script>
+    <script type="text/javascript" src="http://img01.zhaopin.cn/2012/js/rd/fnresuadmi.js"></script>
+    <script type="text/javascript" src="http://img01.zhaopin.cn/2012/js/ui/jquery.zlzp.autocomplete.js"></script>
+    <script type="text/javascript" src="http://img01.zhaopin.cn/2012/js/za/smp.min.js"></script>
+    <script type="text/javascript" src="http://img01.zhaopin.cn/2012/js/rd/previewlayer.js?version=20150915"></script>
+    <script type="text/javascript" src="http://img01.zhaopin.cn/2014/rd2/js/fktResumeActive.js"></script>
+    <!--反馈通D期-->
+    <script type="text/javascript" src="http://img01.zhaopin.cn/2014/common/js/jquery.cookie.js"></script>
+    <script type="text/javascript" src="http://img01.zhaopin.cn/2014/rd2/js/feedbackD.js?version=20150915"></script>
+    <script type="text/javascript" src="http://img01.zhaopin.cn/2014/common/js/za/ga.js"></script>
+
+
+        
+        <script language="javascript" type="text/javascript">
+            $(document).ready(function () {
+                //SMP监控
+                smppv.pageView();
+            });
+
+
+        </script>
+    </body>
+    </html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset='utf-8'>
+	<title> 自动生成ＪＤ</title>
+	<link rel="stylesheet" href="http://cdn.amazeui.org/amazeui/2.4.0/css/amazeui.min.css">
+	<link rel="icon" href="head.ico">
+	<style>
+	.hint{
+		color:#c60a00;
+	}
+	.li {
+		list-style: none;
+	}
+	</style>
+
+	<script type="text/javascript">
+	function get_result(){
+		document.getElementById("hint").innerHTML = '<p class="am-active">正在生成结果，请稍等...'+'<i class="am-icon-spinner am-icon-spin"></i></p>';
+        return true
+	}
+
+	</script>
+</head>
+<body>
+    <div class="am-topbar">
+        <h2 class="am-active">demo</h2>
+    </div>
+
+    <div class="am-g">
+    	<div class="am-u-sm-8 am-u-sm-centered">
+    		<div class="am-intro-left" style="height:180px">
+    			<label class="am-active"><em>使用说明</em></label>
+    				<p class="am-serif">分别输入职位名称，职责、要求和技能句子数，再点击提交，即可</p>
+    		</div>
+    		<form class="am-form-inline" role='form' action='/genjd' method='post' onsubmit="return get_result()">
+                <input name="jobname" type="text" class="am-form-field am-radius" style="width:50%" placeholder='input jobname here' autofocus='True' ></input>
+                <input name="duty_num" type="num" class="am-form-field am-round" style="width:10%" title='input duty num here' min="1" max="50" value={{duty_num}} ></input>
+                <input name="demand_num" type="num" class="am-form-field am-round" style="width:10%" title='input demand num here' min="1" max="50" value={{demand_num}} ></input>
+                <input name="skill_num" type="num" class="am-form-field am-round" style="width:10%" title='input skill num here' min="1" max="50" value={{skill_num}} ></input>
+    			<button type="submit" onclick="get_result()" class="am-btn am-btn-primary" value="submit">submit</button>
+    		</form>
+    	</div>
+        <div id="hint"></div>
+    </div>
+    <script type="text/javascript" src="http://cdn.amazeui.org/amazeui/2.4.0/js/amazeui.min.css"></script>
+</body>
+</html>

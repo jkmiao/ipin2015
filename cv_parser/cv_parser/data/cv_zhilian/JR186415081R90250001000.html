@@ -1,0 +1,455 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=7" />
+    <title>智联简历</title>
+    <link href="http://img00.zhaopin.cn/2012/css/rd/common.css" rel="stylesheet" type="text/css" />
+    <link href="http://img00.zhaopin.cn/2012/css/rd/rdnew_2.css?version=20150713" rel="stylesheet" type="text/css" />
+    <link href="http://img00.zhaopin.cn/2012/css/rd/rdnewlayer.css" rel="stylesheet"
+        type="text/css" />
+    <link href="http://img00.zhaopin.cn/2012/css/ui/jquery.zlzp.popupdiv.css" type="text/css"
+        rel="stylesheet" />
+    <link href="http://img01.zhaopin.cn/2014/rd2/css/feedbackD.css?version=20150713" type="text/css"
+          rel="stylesheet" />
+    <link href="/css/sendinfo.css" type="text/css" rel="stylesheet" />
+    <style media="print">
+        .resume-preview{
+            color:#000;
+        }
+        .resume-body-left{
+            width:auto;
+        }
+        .resume-preview-left {
+            box-shadow:none;
+            border:none;
+        }
+        .resume-preview-right,.nav-body-top
+        {
+            display:none;
+        }
+        h3 {
+            border-bottom:2px solid #ccc;
+        }
+        .similar-resume{
+            display:none
+        }
+
+    </style>
+ 
+</head>
+<body>
+    <div class="resume-preview clearfix">
+        
+
+
+<div class="resume-body-left">
+    <div class="resume-preview-head" id="resumeContentHead">
+        <img alt="" src="http://img02.zhaopin.cn/2012/img/rd/logo.png" width="133" height="71"
+            align="right" class="headerlogo" />
+            <div class="intro-span-right">
+                还有<span>0</span>份简历下载余额</div>
+                    <input type="hidden" name="resumeDownloadNum" id="resumeDownloadNum" value="0" />
+            <div class="resume-preview-title">
+                <span class="resume-preview-list">简历名称： <strong id="resumeName"></strong></span>
+                <br />
+                <span class="resume-preview-list">期望从事职业： <strong id="desireIndustry"></strong></span>
+                <br />
+                <span class="resume-preview-list">简历更新时间： <strong id="resumeUpdateTime"></strong>
+                </span>
+            </div>
+            <div class="resume-preview-center">
+<form action="/ResumePreview/resume/_Detail?extId=JR186415081R90250001000&amp;version=1&amp;gltype=0" data-ajax="true" data-ajax-mode="replace" data-ajax-success="changeLanguageTag" data-ajax-update="#resumeDetail" id="frmResumeDetail" method="post">                    <div class="center-left">
+                        <div class="resume-left-tips">
+                            <div class="resume-left-tips-span">
+                                <span class="resume-left-tips-id">ID:JR186415081R90250001000</span></div>
+                            <div class="resume-left-tips-span tips-span-right">
+                                <span class="resume-left-tips-right"><a href="http://rd2.zhaopin.com/s/resusech/searchUserResume.asp?um_id=JR186415081" target="_blank">查看所有简历</a></span>
+                            </div>
+                        </div>
+                    </div>
+                    <!--<div class="center-right">你可能对这些简历感兴趣</div>-->
+                    <input type="hidden" value="Chinese" name ="language" id="language" />
+                    <input type="hidden" value="Chinese" name ="anotherLanguage" id="anotherLanguage" />
+</form>            </div>
+    </div>
+
+
+
+<style type="text/css">
+    .posR { position: relative; border: 1px solid #ccc; height: 32px; }
+    .nameMatching, .nameMatchings { line-height: 32px; font-size: 12px; float: left; font-weight: normal; }
+    .nameMatching { margin-left: 28px; background: url(http://img02.zhaopin.cn/2012/img/rd/Pmatching.png) no-repeat 7px 7px; padding-left: 50px; height: 22px; padding-top: 10px; }
+    .nameMatching .star { width: 50px; height: 9px; display: block; font-size: 0; background: url(http://img02.zhaopin.cn/2012/img/rd/matching-mark.png) no-repeat; }
+    .nameMatching .star5 { background-position: 0 0; }
+    .nameMatching .star4 { background-position: 0 -9px; }
+    .nameMatching .star3 { background-position: 0 -18px; }
+    .nameMatching .star2 { background-position: 0 -27px; }
+    .nameMatching .star1 { background-position: 0 -36px; }
+    .nameMatching .star0 { background-position: 0 -45px; }
+    .nameMatchings { cursor: pointer; margin-left: 10px; background: url(http://img02.zhaopin.cn/2012/img/rd/Pcell.png) no-repeat 0 7px; height: 22px; width: 35px; }
+    /*给我推荐更多相似人才 按钮*/
+    .acceptInvite { width: 100%; overflow: hidden; }
+    .preview3 { float: left; }
+    .preview3 span { font-size: 14px; }
+    .moreRecom { float: left; width: 155px; height: 25px; background-color: #ff6600; border-radius: 3px; margin-left: 5px; margin-top: 25px; font: 12px/25px '微软雅黑'; color: #fff; text-align: center; cursor: pointer; }
+</style>
+
+<style>
+    .fbtips { width: 748px; background-color: #fef8e0; line-height: 28px; border: 1px #eeebde solid; border-bottom: 1px #ffd138 solid; padding-left: 20px; font-size: 12px; color: #777; letter-spacing: 1px; height: 100%; overflow: hidden; }
+    .fbtips span { float: left; }
+    .fbtips span.textsty { color: #222; font-weight: bold; }
+    .fbtips span.textstyone { color: #222; font-weight: bold; width: 180px; float: left; word-wrap: break-word; }
+    /*新增css zhaoqi*/
+    .refuseReason { border: 2px solid #3aba13; -moz-border-radius: 3px; -webkit-border-radius: 3px; border-radius: 3px; padding: 8px 13px; display: inline-block; max-width: 206px; line-height: 20px; font-size: 14px; line-height: 22px; display: none; background-color: #fff; position: absolute; left: 388px; top: 65px; width: expression(this.width>206?"206":this.width); }
+    .aRefuse { height: 58px; line-height: 58px; float: left; margin-left: -30px; }
+    .summary-bottom { position: relative; }
+    /*新增css zhaoqi*/
+</style>
+
+<script type="text/javascript">
+    function showMatchDesc(id, rootcompanyId, name) {
+        $(".MatchingDescriptionBtn").match({
+            url: "http://rd2.zhaopin.com/s/resuadmi/resumematchingdescription.asp",
+            type: "Get",
+            data: { id: id, rootcompanyId: rootcompanyId, name: name },
+            callback: "matchingcallback"
+        });
+    }
+</script>
+<link type="text/css" rel="stylesheet" href="http://img00.zhaopin.cn/2012/css/rd/rdmatching.css">
+<div id="resumeDetail">
+     <div class="resume-preview-main">
+        <div class="resume-preview-left">
+            <div id="resumeContentBody">
+                <div class="resume-preview-main-title posR">
+    <div class="main-title-fl fc6699cc" style="height: 54px;">
+        个人信息
+    </div>
+ 
+
+    
+    
+</div>
+        <div class="summary">
+            <a target="_blank" href="http://rd.zhaopin.com/img/lookResumes.jpg"><img alt="" src="http://rd.zhaopin.com/img/lookResumes.jpg" width="93" height="131" align="right" class="headerImg" /></a>
+            <div class="summary-top">
+                <span>女&nbsp;&nbsp;&nbsp;&nbsp;30岁(1985年3月)&nbsp;&nbsp;&nbsp;&nbsp;9年工作经验&nbsp;&nbsp;&nbsp;&nbsp;大专&nbsp;&nbsp;&nbsp;&nbsp;已婚</span>
+                <br />
+                现居住地：杭州  | 户口：杭州 | 中共党员(含预备党员)
+            </div>
+            <div class="summary-bottom">
+                <!--普通简历显示联系方式-->
+                <!--end显示联系方式-->
+
+                <!--橄榄枝显示联系方式-->
+                <!--end显示联系方式-->
+                <!--橄榄枝-->
+                <!--end橄榄枝-->
+                    <div class="preview-table-body-add">如需联系方式请下载该简历</div>
+
+            </div>
+        </div>
+            <div class="resume-preview-all">
+                <h3 class="fc6699cc">求职意向</h3>
+                <div class="resume-preview-top">
+                    <table cellpadding="0" cellspacing="0" >
+                        <tr valign="top">
+                            <td width="85" align="right">期望工作地区：</td>
+                            <td>杭州</td>
+                        </tr>   
+                        <tr valign="top">
+                            <td width="85" align="right">期望月薪：</td>
+                            <td>10001-15000元/月</td>
+                        </tr>   
+                        <tr valign="top">
+                            <td width="85" align="right">目前状况：</td>
+                            <td>我目前处于离职状态，可立即上岗</td>
+                        </tr>
+                        <tr valign="top">
+                            <td width="85" align="right">期望工作性质：</td>
+                            <td>全职</td>
+                        </tr>                        
+                        <tr valign="top">
+                            <td width="85" align="right">期望从事职业：</td>
+                            <td>总裁助理/总经理助理、副总裁/副总经理</td>                   
+                        </tr>
+                        <tr valign="top">
+                            <td width="85" align="right">期望从事行业：</td>
+                            <td>教育/培训/院校、跨领域经营、互联网/电子商务、计算机软件、基金/证券/期货/投资、快速消费品（食品/饮料/烟酒/日化）、医药/生物工程、医疗/护理/美容/保健/卫生服务、能源/矿产/采掘/冶炼、环保</td>
+                        </tr>   
+                    </table>
+                </div>
+	        </div>
+        
+                <div class="resume-preview-all">
+                    <h3 class="fc6699cc">自我评价</h3>          
+                    <div class="resume-preview-dl rd-break">      工作严谨认真，生活热情随和， 因为之前从事过企业管理培训，对于企业现存问题的敏锐度极高，发现就想解决，好奇心强，喜欢新知识和新领域，也因为工作的关系对各行各业都有一定的认识和理解，有一定的谈判、洞察、识人的能力，又有丰富的企业内务管理的经验。喜欢与人交流，结交新朋友！<br />    一直渴求更适合舞台给予空间去历练，去实现自我的价值，为我钟爱的企业创造更大的价值，荣辱与共！<br /></div>
+                </div>   
+        
+            <div class="resume-preview-all workExperience">
+                <h3 class="fc6699cc">工作经历</h3>
+                    <h2>2015.05 - 2015.06&nbsp;&nbsp;杭州宽客财富投资管理有限公司&nbsp;&nbsp;（1个月）</h2>
+                    <h5>董事长助理兼行政人事经理 | 10001-15000元/月</h5>
+                    <div class="resume-preview-dl">
+                        基金/证券/期货/投资 | 企业性质：民营 | 规模：100-499人
+                    </div>
+                        <div class="resume-preview-dl">
+                            <table cellpadding="0" cellspacing="0" >
+                                <tr valign="top">
+                                    <td width="60">工作描述：</td>
+                                    <td>宽客财富定位为互联网时代背景下中国新一代以对冲基金为核心的高端财 <br />富管理专业平台，专注于为大型集团、上市公司和个人可投金融资产在600 <br />万以上的高净值人群提供财富持续稳健增长的资产配置服务，并通过独特的 <br />互联网思维和专业的对冲基金工具，专业定制符合客户需求的金融理财产 <br />品，协助规划财富目标、寻找最优的资产配置方案...<br />工作职责：<br />1、协助董事长做好公司企业文化与品牌建设、塑造公司对外形象。<br />2、协助董事会做好行政和人事管理工作；根据公司的总体战略构建人力行政体系，包括制度建立、组织梳理和完善岗位职责、资源整合及运作管理<br />3、.参与集团公司重大经营事项的决策。<br />4、.参与对集团公司各个关键岗位人员的工作业绩评估。<br />5、.经董事长授权，代表董事长进行重大商务、公共关系活动。<br />6、.协助董事长日常行政工作及管理事务处理。<br />7、负责管理公司的各类证照以及基金产品开户工作<br />8、负责高层会务及贵宾接待安排工作。<br />9.、董事长委办的其他工作。</td>
+                                </tr>
+                            </table>
+                        </div>    
+                    <h2>2014.10 - 2015.01&nbsp;&nbsp;杭州国草生物科技有限公司&nbsp;&nbsp;（3个月）</h2>
+                    <h5>总裁办助理 | 10001-15000元/月</h5>
+                    <div class="resume-preview-dl">
+                        快速消费品（食品/饮料/烟酒/日化） | 企业性质：民营 | 规模：100-499人
+                    </div>
+                        <div class="resume-preview-dl">
+                            <table cellpadding="0" cellspacing="0" >
+                                <tr valign="top">
+                                    <td width="60">工作描述：</td>
+                                    <td>杭州国草生物科技有限公司是一家致力于中藏药材和营养食品研发和生产于一体的生物科技专业机构。十三年来，公司一直致力于以冬虫夏草为主的珍稀药用资源的研究和精深加工，在冬虫夏草的科学利用和安全增效方面居于世界领先地位。目前公司已形成了原料基地自有、虫草精深加工、品牌专业化运营为一体的国内最专业冬虫夏草全系列产业链和青藏高原土特产、霍山石斛胶囊为一体的产品体系。<br />秉承着“品质国草，健康人生”的经营理念和贯彻纯品含片最专业，复方更独特的研发理念，十三年来，国草人以创新、科学、严谨、公正的态度，结合以人为本的精神在冬虫夏草产品产业发展之路上孜孜追求。目前国草的系列产品已远销欧美等国际市场，并引起英国、瑞士等国际权威机构的高度关注和竞相研究。<br />网址：http://www.tyguocao.com/<br /><br />主要工作任务：<br />1、协助董事会做好人事和行政管理工作；根据公司的总体战略构建人力行政体系，包括制度建立、岗位职责的整理编写、组织架构的梳理与完善、资源整合及运作管理；<br />2、在公司的领导下，主持公司的内务管理，与各部门有效沟通，为业务部门提供服务保障。<br />3、负责公司各类合同的审阅，管理公司的公章和合同章，管理公司各类重要文件；<br />4、在公司的领导下，对公司有关职能部门进行监督及管理，做好上传下达工作。<br />5、对公司发生的各类事件提出合理化处理意见。<br />6、负责公司有关对外部关系的建立、沟通、接待。<br />7、负责组织、主持公司各类会议。<br />8、负责对外接待工作，来信来访，配合政府部门、新闻媒体完成相关工作。<br />9、制订公司经营目标、年度计划。<br />10、负责策划、组织公司员工的集体活动。<br />11、涉及公司项目的申报工作(高新区5050，雏鹰计划)<br />12、董事会或者董事长、总裁、总经理交办的其它临时性工作。</td>
+                                </tr>
+                            </table>
+                        </div>    
+                    <h2>2010.03 - 2014.08&nbsp;&nbsp;杭州飞燕信息科技有限公司&nbsp;&nbsp;（4年5个月）</h2>
+                    <h5>总经理助理-行政人事管理-销售总监 | 8001-10000元/月</h5>
+                    <div class="resume-preview-dl">
+                        互联网/电子商务 | 企业性质：民营 | 规模：20-99人
+                    </div>
+                        <div class="resume-preview-dl">
+                            <table cellpadding="0" cellspacing="0" >
+                                <tr valign="top">
+                                    <td width="60">工作描述：</td>
+                                    <td>简介：杭州飞燕信息科技有限公司是一家集通信、运营、互联网、多媒体为一体的科技公司，2005年成立至今，公司搭建了三个不同的服务平台；<br />一、移动商宝（www.mc0086.com）功能点包括短信群发、网络传真、电话会议、电网群聊等，其中短信群发和电网群聊发展最为稳健，电网群聊业务针对的客户对象都是培训公司的团训学员；<br />二、YC即时通讯（www.0571fy.com），2010年着手开发，在电网群聊的基础上建立的即时通讯；<br />三、YC在线学习（www.4000571039.com）,2012年规划开发，定位是企业社交网络，2013年中旬投入市场，2013年7月重新定位成在线学习平台，是针对中小型企业的网络学习课程平台，分别开发网络版、安卓android、苹果ios。<br /><br />主要工作内容:<br />1、根据总经理的要求确定公司的经营方针，建立公司的经营体系并组织实施和改进；<br />2、协助总经理制定战略计划和年度经营计划及各阶段工作目标分解<br />3、负责公司日常行政和人事管理工作，根据公司的总体战略构建人力行政体系，包括制度建立、绩效考核制订与实施、培训体系的搭建；<br />4、负责主持移动商务事业部（市场部）的日常工作；团队日常管理及建设，包括任务分配、指标考核与激励等<br />5、负责公司产品的战略运营工作与新项目的运营管理工作；<br />6、负责制订销售模式、销售策略、销售提成制度，负责代理与渠道的洽谈合作与维护；<br />6、协助总经理维护其客户和拓展客户资源关系，接待和拜访公司重要客户；<br />7、组织并实施总经理所召开的各项总结及计划会议，准确记录会议纪要跟进会议决议的执行；<br />8、在总经理领导下负责具体工作的布置、实施、检查、督促、落实执行情况；<br />9、有对各部门经理的绩效考核向总经理提出评价结果的权利；<br />10、有权在发生重大事故或突发性事件情况下，全权代表总经理进行紧急决策及及时处理有关问题； <br />11、负责组织完成总经理下达的其他临时性、阶段性工作和任务；</td>
+                                </tr>
+                            </table>
+                        </div>    
+                    <h2>2009.05 - 2010.02&nbsp;&nbsp;国泰金控浙江分公司&nbsp;&nbsp;（9个月）</h2>
+                    <h5>西湖营销部 | 保险顾问/财务规划师 | 4001-6000元/月</h5>
+                    <div class="resume-preview-dl">
+                        保险 | 企业性质：合资 | 规模：100-499人
+                    </div>
+                        <div class="resume-preview-dl">
+                            <table cellpadding="0" cellspacing="0" >
+                                <tr valign="top">
+                                    <td width="60">工作描述：</td>
+                                    <td>简介：台湾地区国泰人寿保险股份游戏那公司为国泰金控集团旗舰企业，实力位居台湾地区寿险业榜首。总资产超过人民币5058亿元，员工3.1万人；在台湾地区寿险业市场占有率第1名，每三个台湾地区居民就有一个国泰人寿的保户。2003年荣获亚洲企业最佳雇主奖，入选全球500强大企业，列为全球第14打保险集团，被誉为华人的保险专家。<br />国泰之路：<br />2009年05月    入司<br />2009年08月    晋升   襄理<br />国泰荣誉：<br />1.参加09的锦秋之旅 参加“锦秋之旅”——河南洛阳<br />2.获得09年全国第二十五强（8工-10工）<br />3.参加国泰总经理英雄宴<br /></td>
+                                </tr>
+                            </table>
+                        </div>    
+                    <h2>2006.12 - 2009.04&nbsp;&nbsp;宁波时代光华教育咨询有限公司&nbsp;&nbsp;（2年4个月）</h2>
+                    <h5>销售部 | 大客户经理-内训项目经理-主持人 | 4001-6000元/月</h5>
+                    <div class="resume-preview-dl">
+                        其他 | 企业性质：民营 | 规模：20-99人
+                    </div>
+                        <div class="resume-preview-dl">
+                            <table cellpadding="0" cellspacing="0" >
+                                <tr valign="top">
+                                    <td width="60">工作描述：</td>
+                                    <td>       在时代光华的3年多是我人生最重要的阶段，完成了职业生涯第一次的蜕变，从什么都不懂的应届毕业生到富有激情和感染力的会场主持，经过我的努力使得宁波多家知名企业成为我的合作客户：宁波银行股份有限公司、方太集团、光大银行宁波分行、力劲科技、萨基姆波导研发公司、富达股份、杰客诚贸易、大丰实业、大榭招商国际码头等多家企业！<br />        擅长洽谈内训，成功合作过三十多场内训，独立编制培训项目定制方案，及培训需求调研、分析，与讲师沟通课程内容修改，到课程中的主持协助，再到课后的测试跟踪评估，推荐其他课程或者培训产品进行培训的巩固加强！有不错的师资可以咨询！内训最能拉近与客户之间的关系，帮助客户发现和解决企业现存或隐患问题！<br />       从2007年1月开始兼任公开课的主持，大大小小主持过五六十场，包括开场舞和中场舞的带领！<br />       从2007年8月开始担任会务总监，非常了解会务的流程、准备事项、人员安排、会务营销安排等等事项，需讲求团队默契与协作能力！<br />       07-08年都是宁波时代光华的TOP SALE!</td>
+                                </tr>
+                            </table>
+                        </div>    
+            </div>
+        
+        
+            <div class="resume-preview-all">
+                <h3 class="fc6699cc">教育经历</h3>
+                <div class="resume-preview-dl educationContent">
+2015.01 - 至今&nbsp;&nbsp;浙江工商大学&nbsp;&nbsp;金融学&nbsp;&nbsp;本科<br />
+2004.09 - 2007.07&nbsp;&nbsp;宁波大红鹰职业技术学院&nbsp;&nbsp;涉外文秘&nbsp;&nbsp;大专<br />
+                </div>
+            </div>
+    
+    
+    
+     
+    
+
+     
+        
+    
+
+            <div class="previewLayer11 rd_button smpevent" data-smpaction="downloadresume" data-smpposition="resumedetail"></div>
+        </div>
+<div class="resume-preview-right">
+
+            <div class="resume-preview-button previewLayer11 smpevent" data-smpaction="downloadresume" data-smpposition="resumedetail">
+                <span class="resume-preview-button-span preview-icon11"></span>下载简历</div>
+            <div class="resume-preview-button previewLayer12 smpevent" data-smpaction="savetemporaryresume" data-smpposition="resumedetail">
+                <span class="resume-preview-button-span preview-icon12"></span>暂存简历</div> 
+
+    <a class="similar-button-gray previewLayer_xsjl" style="display:none" target="_blank"><span class="preview-icon_xsjl resume-preview-button-span preview-icon-similar-gray">
+    </span><span id="xsjl_count">相似简历(<img id="xsjldd" src="http://img02.zhaopin.cn/2012/img/rd/xsjldd.gif" />)</span>
+        <span class="new-icon"></span></a>
+    <!--<div class="resume-preview-button previewLayer10">
+        <span class="resume-preview-button-span preview-icon10"></span>返回顶部</div>-->
+</div>
+<div class="back-to">
+</div>
+<div class="szmr_over">
+    <div class="szmr_overts">
+        <div id="subWindowMain" class="tanchuang_main">
+        </div>
+    </div>
+</div>
+<div id="downfile" style="display: none">
+</div>
+    </div>
+    </div>
+</div>
+
+<!--随手聘-->
+<input type="hidden" name="posttype" id="posttype" value="0" />
+<input type="hidden" name="labeltype" id="labeltype" value="0" />
+<input type="hidden" name="positionid" id="positionid" value="0" />
+<!--反馈通D期-->
+<input type="hidden" name="tt_username" id="tt_username" value="唐锦莎" />
+<input type="hidden" name="tt_sourceid" id="tt_sourceid" value="8" />
+
+<input type="hidden" name="resume_id" id="resume_id" value="138739092" />
+<input type="hidden" name="extId" id="extId" value="JR186415081R90250001000" />    
+<input type="hidden" name="resume_version" id="resume_version" value="1" />    
+<input type="hidden" name="resume_language" id="resume_language" value="1" />
+<input type="hidden" name="resume_Name" id="resume_Name" value="副总/总助/董助/管理9年 杭州" />
+<input type="hidden" name="resumeUserId" id="resumeUserId" value="118641508" />
+<input type="hidden" name="currentCompanyName" id="currentCompanyName" value="蚌埠市思迈商贸有限公司" />
+<input type="hidden" name="currentDepartmentName" value="蚌埠市思迈商贸有限公司"/>
+<input type="hidden" name="PositionNumber" id="PositionNumber" value="" />
+<input type="hidden" name="gltype" id="gltype" value="0" />
+<input type="hidden" name="GlStatus" id="GlStatus" value="" />
+
+<input type="hidden" name="ApplyResume" id="ApplyResume" value="" />
+<input type="hidden" name="rootCompanyId" id="rootCompanyId" value="75290459" />
+
+<!-- Trace Data Block Start -->
+<input type="hidden" name="dda_kpi" id="dda_kpi" value="M1" />
+<input type="hidden" name="dda_operatorid" id="dda_operatorid" value="655369060" />
+<input type="hidden" name="dda_companyid" id="dda_companyid" value="75290459" />
+<input type="hidden" name="dda_custom" id="dda_custom" value="" />
+<input type="hidden" name="dda_ownerid" id="dda_ownerid" value="" />
+<input type="hidden" name="dda_cvid" id="dda_cvid" value="JR186415081R90250001000_1" />
+<input type="hidden" name="dda_position" id="dda_position" value="resumedetail" />
+<input type="hidden" name="dda_action" id="dda_action" value="viewdetail" />
+<input type="hidden" name="dda_xtable" id="dda_xtable" value="" />
+<input type="hidden" name="dda_type" id="dda_type" value="cvdownload" />
+<!-- Trace Data Block End   -->
+<a id="fileLink" href="" style="display:none"></a>
+<script type="text/javascript" language="javascript">
+    var desire = document.getElementById("desireIndustry");
+    if (desire != null) {
+        desire.innerHTML = "总裁助理/总经理助理、副总裁/副总经理";
+    }
+
+    var resumeName = document.getElementById("resumeName");
+    if (resumeName != null) {
+        resumeName.innerHTML = "副总/总助/董助/管理9年 杭州";
+    }
+
+    var resumeUpdateTime = document.getElementById("resumeUpdateTime");
+    if (resumeUpdateTime != null) {
+        resumeUpdateTime.innerHTML = "2015年08月27日";
+    }
+    if (typeof (jobTitleInit) != 'undefined') {
+        jobTitleInit();
+    }
+</script>
+</div>
+
+    <div id="smilarresume" class="similar-resume" style="display:none">
+        <h1>相似简历</h1>
+        <table width="100%" cellspacing="0" cellpadding="0">
+             <thead>
+                <tr>
+                    <td nowrap>简历名称</td>
+                    <td nowrap width="135">职位名称</td>
+                    <td nowrap width="30">学历</td>
+                    <td nowrap width="30">性别</td>
+                    <td nowrap width="30">年龄</td>
+                    <td nowrap width="70">期望月薪</td>
+                    <td nowrap width="30">状态</td>
+                    <td nowrap width="60">现居住地</td>
+                    <td nowrap class="similar-td-padding" width="68">更新时间</td>
+                </tr>
+             </thead>
+             <tbody id="sr_tobdy">
+             </tbody>
+             <tfoot>
+                <tr>
+                    <td colspan="10">
+                        <a id="sr_all" target="_blank"></a>
+                        <div class="satisfaction-ul">
+                            <span>您对“相似简历”的功能是否满意？</span>
+                            <span id="smilarResumeFeedback"><a class="satisfaction-yes" href="javascript:void(0);">满意</a><a class="satisfaction-no" href="javascript:void(0)">不满意</a></span>
+                        </div>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div><input type="hidden" name="viewSource" id="viewSource" value="2" />
+<input type="hidden" name="keyword_search" id="keyword_search" value="" />
+<input type="hidden" name="college_search" id="college_search" value="" />
+<input type="hidden" name="company_search" id="company_search" value="" />
+<input type="hidden" name="dda_source" id="dda_source" value="2" />
+
+
+    </div>
+    <div class="editor-layer-add">
+        <div class="editor-layer-icon cvLabelColor1 dev_label_icon_list" dev_classname="cvLabelColor1">
+        </div>
+        <div class="editor-layer-icon cvLabelColor2 dev_label_icon_list" dev_classname="cvLabelColor2">
+        </div>
+        <div class="editor-layer-icon cvLabelColor3 dev_label_icon_list" dev_classname="cvLabelColor3">
+        </div>
+        <div class="editor-layer-icon cvLabelColor4 dev_label_icon_list" dev_classname="cvLabelColor4">
+        </div>
+        <div class="editor-layer-icon cvLabelColor5 dev_label_icon_list" dev_classname="cvLabelColor5">
+        </div>
+        <div class="editor-layer-icon cvLabelColor6 dev_label_icon_list" dev_classname="cvLabelColor6">
+        </div>
+        <div class="editor-layer-icon cvLabelColor7 dev_label_icon_list" dev_classname="cvLabelColor7">
+        </div>
+        <div class="editor-layer-icon cvLabelColor8 dev_label_icon_list" dev_classname="cvLabelColor8">
+        </div>
+        <div class="editor-layer-icon cvLabelColor9 dev_label_icon_list" dev_classname="cvLabelColor9">
+        </div>
+        <div class="editor-layer-icon cvLabelColor10 dev_label_icon_list" dev_classname="cvLabelColor10">
+        </div>
+        <div class="editor-layer-icon cvLabelColor11 dev_label_icon_list" dev_classname="cvLabelColor11">
+        </div>
+        <div class="editor-layer-icon cvLabelColor12 dev_label_icon_list" dev_classname="cvLabelColor12">
+        </div>
+    </div>
+    <script type="text/javascript" src="http://img01.zhaopin.cn/2012/js/jquery-1.6.4.min.js"></script>
+    <script type="text/javascript" src="http://img01.zhaopin.cn/2012/js/zlzp.app.js"></script>
+    <script type="text/javascript" src="http://img01.zhaopin.cn/2012/js/rd/jquery.unobtrusive-ajax.min.js"></script>
+    <script type="text/javascript" src="http://img01.zhaopin.cn/2012/js/ui/jquery.zlzp.popupdiv.js"></script>
+    <script type="text/javascript" src="http://img01.zhaopin.cn/2012/js/ui/jquery.zlzp.popupbase.js"></script>
+    <script type="text/javascript" src="http://img01.zhaopin.cn/2012/js/rd/common.js"></script>
+    <script type="text/javascript" src="http://img01.zhaopin.cn/2012/js/rd/utilscript.js"></script>
+    <script type="text/javascript" src="http://img01.zhaopin.cn/2012/js/rd/fnresuadmi.js"></script>
+    <script type="text/javascript" src="http://img01.zhaopin.cn/2012/js/ui/jquery.zlzp.autocomplete.js"></script>
+    <script type="text/javascript" src="http://img01.zhaopin.cn/2012/js/za/smp.min.js"></script>
+    <script type="text/javascript" src="http://img01.zhaopin.cn/2012/js/rd/previewlayer.js"></script>
+    <script type="text/javascript" src="http://img01.zhaopin.cn/2014/rd2/js/fktResumeActive.js"></script>
+    <!--反馈通D期-->
+    <script type="text/javascript" src="http://img01.zhaopin.cn/2014/common/js/jquery.cookie.js"></script>
+    <script type="text/javascript" src="http://img01.zhaopin.cn/2014/rd2/js/feedbackD.js?version=20150723"></script>
+    <script type="text/javascript" src="http://img01.zhaopin.cn/2014/common/js/za/ga.js"></script>
+
+
+        
+        <script language="javascript" type="text/javascript">
+            $(document).ready(function () {
+                //SMP监控
+                smppv.pageView();
+            });
+
+
+        </script>
+    </body>
+    </html>
