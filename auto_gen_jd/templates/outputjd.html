@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" >
+	<title>技能在线抽取</title>
+	<link rel = "stylesheet" href="http://cdn.amazeui.org/amazeui/2.4.0/css/amazeui.min.css">
+    <link rel = "icon" href="./head.ico" >
+
+    <script>
+        function get_result(){
+            document.getElementById("res_hint").innerHTML='<div class="am-active">'+'解析结果：'+'</div>';
+            return true
+        }
+    </script>
+</head>
+<body>
+    {% autoescape None %}
+	<div class="am-topbar">
+	<h1 class="am-active">在线演示</h1>
+	</div>
+	<div class="am-g">
+		<div class="am-u-sm-7 am-u-sm-centered">
+            <div class="am-intro-left am-active" style="height:180px">
+                <label ><em>使用说明</em></label>
+                <p class="am-serif">粘贴企业招聘信息到文本框,再点击提交，可获得jd解析结果,输入招聘信息应尽可能全面，包括职位名称，公司名称等具体信息，否则可能解析效果不佳。<em style="color:#812">将鼠标放在输出关键词后</em>会有提示语解释，每个词是什么意思。
+                <a href="/genjd" title="自动生成JD">自动生成JD</a></p><br />
+            </div>
+			<form class="am-form am-form-horizontal" role="form" action="/jdparser" method="post" onsubmit="return get_result()">
+                <textarea class="am-form-field am-radius" name="source" rows="20" cols="110" placeholder="input job description here" autofocus="True" >{{source}}</textarea>
+                <div class="am-u-sm-centered" style="text-align:center">
+                    <div class="am-form-group am-form-file">
+                        <button type='button' class='am-btn am-btn-danger am-btn-sm'><i class='am-icon-cloud-upload'></i>或选择要上传的文件</button>
+                        <input type='file' name="jdfile" />
+                    </div>
+                  <button type="submit" onclick="get_result()" class="am-btn am-btn-primary" value="提交">submit</button>
+                </div>
+			</form>
+		</div>
+		<br />
+		<div class="am-u-sm-6 am-u-sm-centered">
+		<div id='res_hint'></div>
+		<div id="result">
+        {% set hintsent = "解析结果： "%}
+        {{hintsent}}
+        <a href="" class="am-icon-btn am-success am-icon-drupal am-icon-sm"></a>
+        <p class="am-badge am-badge-success" style="line-height:28px;font-size:120%">
+        jd # <p>
+            <ul>
+			{% for k,v in result.iteritems() %}
+                {% if k=="demand" or k=="duty" or k=="benefits" %}
+                <li title={{hint[k]}}>{{k}} ( {{hint[k]}} ) : <pre title={{hint[k]}}>{{ v }} </pre></li>
+                {% else %}
+                <li title={{hint[k]}}>{{k}} ( {{hint[k]}} ) :<pre title={{hint[k]}}> {%raw v %}</pre></li>
+                {% end %}{% end %}
+            </ul>
+	</div>
+	<script type="text/javascript" src="http://cdn.amazeui.org/amazeui/2.4.0/js/amazeui.min.js"</script>
+</body>
+</html>

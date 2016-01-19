@@ -45,6 +45,7 @@
 
         <div class="am-u-sm-8 am-u-sm-centered">
             <div id='res_hint' class="am-active">生成结果: <a href="http://192.168.1.91:8086/jdparser" title="解析">JD解析</a></div>
+            <div id='res_hint' class="am-active"><a>ｋ-means聚类生成结果:</a> </div>
             <div id="result" style="background-color:#f8f8f8">
                 {% for k,v in result.iteritems() %}
                 <p class="hint">{{k}}:</p>
@@ -55,6 +56,20 @@
                     </ul>
                 {% end %}
                 <br />
+            </div>
+
+            <div id='res_hint' class="am-active"><a><br />pageRank自动摘要生成结果: </a></div>
+            <div id="result2" style="background-color:#eee">
+                {% for k,v in result2.iteritems() %}
+                <p class="hint">{{k}}:</p>
+                    <ul>
+                    {% for i,line in enumerate(v,1) %}
+                        <li>{{i}}. {{line}}</li>
+                    {% end %}
+                    </ul>
+                {% end %}
+                <br />
+            </div>
             </div>
         </div>
     </div> 
