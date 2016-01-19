@@ -35,4 +35,6 @@
 > 2. 算法编程
 > 3. mysql
 
+![image]("./auto_genjd.png")
+
 >> by-　miaoweihong@ipin.com
