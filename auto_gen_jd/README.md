@@ -35,6 +35,6 @@
 > 2. 算法编程
 > 3. mysql
 
-![image]("./auto_genjd.png")
+![image]("https://github.com/jkmiao/ipin2015/blob/master/auto_gen_jd/auto_genjd.png")
 
 >> by-　miaoweihong@ipin.com
