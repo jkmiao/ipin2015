@@ -3,8 +3,6 @@
 
 __author__='jkmiao'
 
-import jieba
-import numpy as np
 import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')

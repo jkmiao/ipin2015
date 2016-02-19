@@ -6,22 +6,31 @@ from bs4 import BeautifulSoup
 from urllib2 import urlopen
 from collections import OrderedDict,Counter
 from base import JdParserTop
-import threading
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
 
 class JdParserZhiLian(JdParserTop):
     """
-    对lagou Jd 结合html 进行解析
+    对结合html 进行解析
     """
     def __init__(self):
         JdParserTop.__init__(self)
         self.result = OrderedDict()
+        self.result_inc = OrderedDict()
+        self.result_job = OrderedDict()
 
 
     def preprocess(self,htmlContent,fname=None,url=None):
+        """
+        预处理，改换换行符等
+        """
         self.result.clear()
+        self.result_inc.clear()
+        self.result_job.clear()
+        self.result["jdFrom"] = "zhilian"
+
+
         html = ""
         if url!=None:
             html = urlopen(url).read()
@@ -35,7 +44,7 @@ class JdParserZhiLian(JdParserTop):
         
         self.html= re.sub(u"<br.?/?>|<BR.?/?>|<br>",u"\n",html)
 
-        self.soup = BeautifulSoup(self.html)
+        self.soup = BeautifulSoup(self.html,"lxml")
 
         self.jdsoup = self.soup.find("div","terminalpage-left")
         self.compsoup = self.soup.find("div","company-box")
@@ -44,20 +53,24 @@ class JdParserZhiLian(JdParserTop):
 
         self.linelist = [ line.strip() for line in self.SPLIT_LINE.split(self.jdstr) if len(line)>1]
     
-        # 针对智联额外增加的，方便解析基本字段
+        # 先存储下来，方便解析基本字段
         self.jdtop_soup = self.soup.find("div","fixed-inner-box").find("div","inner-left fl")
         self.jdbasic_soup = self.jdsoup.find("ul","terminal-ul clearfix").find_all("li")
    
 
 
     def regular_incname(self):
-        incname = self.compsoup.find('p',"company-name-t").get_text()
-        self.result['incName'] = incname.strip()
+        if not self.compsoup:
+            self.result_inc['incName'] = "None"
+        else:
+            incname = self.compsoup.find('p',"company-name-t").get_text()
+            self.result_inc['incName'] = incname.strip()
 
 
     def regular_inc_tag(self):
         res = {"incUrl":"","incIntro":""}
-        inc_tags = self.compsoup.find("ul").find_all("li")
+        
+        inc_tags = self.compsoup.find("ul").find_all("li") if self.compsoup else []
         for tag in inc_tags:
             key = tag.find("span").get_text()
             if re.search(u"规模",key):
@@ -79,7 +92,8 @@ class JdParserZhiLian(JdParserTop):
             find_url = self.INC_URL.search(res["incIntro"])
             if find_url:
                 res["incUrl"] = re.search(u"[\d\w\.:/_\-]+",find_url.group()).group()
-        self.result.update(res)
+
+        self.result_inc.update(res)
 
 
 
@@ -88,14 +102,20 @@ class JdParserZhiLian(JdParserTop):
         """
         发布时间 & 截止时间
         """
-        pub_time = self.jdbasic_soup[2].strong.get_text()
-        self.result["pub_time"] = pub_time
-        self.result["end_time"] = ""
+        for li in self.jdbasic_soup[:5]:
+            if re.search(u"发布时|发布日",li.span.get_text()):
+                self.result["pubTime"] = li.strong.get_text().strip()
+
+            elif re.search(u"截止时|截止日",li.span.get_text()):
+                self.result["endTime"] = li.strong.get_text().strip()
+        if "pubTime" not in self.result:
+            self.result["pubTime"] = ""
+
 
 
     def regular_jobname(self):
         jobname = self.jdtop_soup.find('h1').get_text()
-        self.result['jobName'] = self.CLEAN_JOBNAME.sub("",jobname.strip().lower())
+        self.result_job['jobPosition'] = re.sub("\s+","",jobname.strip().lower())
        # self.result['jobName'] = self.clean_jobname(jobname.strip()) 更好，但比较慢
 
 
@@ -110,7 +130,7 @@ class JdParserZhiLian(JdParserTop):
             elif re.search(u"类别",li.span.get_text()):
                 res["jobCate"] = li.strong.get_text()
 
-        self.result.update(res)
+        self.result_job.update(res)
 
     def regular_sex(self):
         """
@@ -129,34 +149,22 @@ class JdParserZhiLian(JdParserTop):
                     res = u"女"
                 break
 
-        self.result['sex'] = str(res)
+        self.result_job['gender'] = str(res)
 
 
     def regular_age(self):
         """
         (minage,maxage)
         """ 
-        res = [0,100]
+        agestr = u"不限"
         for line in self.linelist:
             if re.search(u"\d+后",line):continue
             if self.AGE.search(line):
                 findage = re.search(u"\d{2}?\s?[\-　－到至]?\s?\d{2}周?岁|(至少|不低于|不超过|不大于|大概|大约|不少于|大于)\d+周?岁|\d+周岁(以上|左右|上下)",line)
                 if findage:
                     agestr = findage.group()
-                    age = re.findall("\d+",agestr)
-                    if len(age)>1:
-                        res[0],res[-1] = age[0],age[-1]
-                    elif len(age)==1:
-                        if re.search(u"以上|不低于|至少|大于|超过",line):
-                            res[0] = age[0]
-                        elif re.search(u"小于|低于|不超过|不得?高于|以下|不大于",line):
-                            res[1] = age[0]
-                        else:
-                            res[0] = int(age[0])-3
-                            res[1] = int(age[0])+3
-                    break
 
-        self.result['age'] = map(str,res)
+        self.result_job['age'] = agestr
 
 
     def regular_major(self):
@@ -168,7 +176,7 @@ class JdParserZhiLian(JdParserTop):
             if res:
                 break
 
-        self.result["major"] = list(set(res))
+        self.result_job["jobMajorList"] = list(set(res))
 
 
 
@@ -176,30 +184,21 @@ class JdParserZhiLian(JdParserTop):
         degree = ""
         if re.search(u"学历",self.jdsoup.find("ul").get_text()):
             degree = self.jdbasic_soup[5].strong.get_text()
-        for w in jieba.cut(degree):
-            if w in self.degreedic:
-                degree = w
-                break
-        self.result['degree'] = degree
+
+        self.result_job['jobDiploma'] = degree
 
 
 
     def regular_exp(self):
-        res = [0,100]
+
+        expstr = ""
+        # res = [0,99]
         for li in self.jdbasic_soup:
             if re.search(u"工作经验",li.span.get_text()):
                 expstr = li.strong.get_text()
                 break
 
-        exp = re.findall("\d+",expstr)
-
-        if len(exp)==1:
-            if re.search(u"以上|大于|至少|超过|不少于",expstr):
-                res[0]= exp[0]
-        elif len(exp)>1:
-            res[0],res[1] = exp[0],exp[1]
-
-        self.result['exp'] = map(str,res)
+        self.result_job['jobWorkAge'] = expstr
     
 
     def regular_skill(self):
@@ -210,7 +209,7 @@ class JdParserZhiLian(JdParserTop):
                 if word in self.skilldic:
                     res.append(word)
         res =[w[0] for w in Counter(res).most_common(5)]
-        self.result["skill"] = res
+        self.result_job["skillList"] = res
 
 
 
@@ -219,34 +218,28 @@ class JdParserZhiLian(JdParserTop):
         if re.search(u"工作地点",self.jdsoup.find("ul").get_text()):
             res = self.jdbasic_soup[1].strong.get_text()
         
-        self.result['workplace'] = res
+        self.result_job['jobWorkLoc'] = res
 
 
 
     def regular_pay(self):
-        res = [0,0]
         if re.search(u"职位月薪",self.jdsoup.find("ul").get_text()):
             paystr = self.jdbasic_soup[0].strong.get_text()
-            pay = map(lambda x: re.sub("[kK]","000",x),re.findall("\d+[kK]?",paystr))
-            if len(pay)==1:
-                res[0] = pay[0]
-            elif len(pay)>1:
-                res[0],res[1] = pay[0],pay[-1]
-        self.result['pay'] = map(str,res)
+        self.result_job['jobSalary'] = paystr.strip()
 
     
     def regular_cert(self):
         res = []
         for line in self.linelist:
             findcert = self.CERT.search(line)
-            if findcert:
+            if findcert and len(findcert.group()) and not re.search(u"保证",findcert.group())<5:
                 res.append(findcert.group())
             else:
                 findcert = re.search(u"有(.+资格证)",line)
                 if findcert:
                     res.append(findcert.group())
         res = re.sub(u"[通过或以上至少]","","|".join(res))
-        self.result['cert'] = res.split("|")
+        self.result_job['certList'] = res.split("|")
 
     
 
@@ -277,7 +270,7 @@ class JdParserZhiLian(JdParserTop):
                     res.append(self.CLEAN_LINE.sub("",line))
 
         res = [ str(i)+". "+line for i,line in enumerate(res,1) ]
-        self.result['demand'] = '\n'.join(res)
+        self.result_job['workDemand'] = '\n'.join(res)
 
     def regular_duty(self):
 
@@ -305,83 +298,59 @@ class JdParserZhiLian(JdParserTop):
                 if self.clf.predict(line)=='duty':
                     res.append(self.CLEAN_LINE.sub("",line))
         res = [ str(i)+". "+line for i,line in enumerate(res,1) ]
-        self.result['duty'] = '\n'.join(res)
+        self.result_job['workDuty'] = '\n'.join(res)
+
+
 
     def regular_benefit(self):
-        jdstr = self.jdsoup.find("div","tab-inner-cont").get_text()
-        res,linelist = [],[]
         
+        res = []
         job_tags = self.jdtop_soup.find("div","welfare-tab-box")
         if job_tags:
             job_tags = job_tags.find_all("span")
             for tag in job_tags:
                 res.append(tag.get_text())
 
-        pos = list(self.START_BENEFIT.finditer(jdstr))
-        if not res and len(pos)>0:
-            linelist = [ re.sub("[\s　]+"," ",line) for line in self.SPLIT_LINE.split(jdstr[pos[-1].span()[1]:]) if line>3]
-
-            linelist = filter(lambda x:len(x)>2,linelist) 
-            for i in range(len(linelist)):
-                line = linelist[i]
-                if len(line)<2:
-                    continue
-                if re.match(u"\d[、.\s ]|[（\(【][a-z\d][\.、\s ]|[\u25cf\uff0d]",line) or self.clf.predict(line)=="benefit":
-                    res.append(self.CLEAN_LINE.sub("",line))
-                elif i<len(linelist)-1 and self.clf.predict(linelist[i+1])=='benefit':
-                    res.append(self.CLEAN_LINE.sub("",line))
-                else:
-                    break
-
-            res = [ str(i)+". "+line for i,line in enumerate(res,1) ]
                 
-        self.result['benefit'] = '\n'.join(res)
+        self.result_job['jobWelfare'] = '\n'.join(res)
 
 
     def regular_other(self):
-        jdstr = self.jdsoup.find("div","tab-inner-cont").get_text()
-        linelist = [ self.CLEAN_LINE(line) for line in self.SPLIT_LINE.split(jdstr) if len(line.strip())>5]
-        res = []
-        for line in linelist:
-            if self.clf.predict(line)=='other':
-                res.append(line)
-                
-        self.result['other'] = '\n'.join(res)
-    
-    
-    def multi_process_parser(self,htmlContent=None,fname=None,url=None):
+        jdstr = self.jdsoup.find("div","tab-inner-cont").get_text().strip()
+        self.result_job['jobDesc'] = jdstr 
 
-        self.preprocess(htmlContent,fname,url)
-        thread_list = []
-        thread_list.append(threading.Thread(target=self.regular_incname))
-        thread_list.append(threading.Thread(target=self.regular_inc_tag))
-        thread_list.append(threading.Thread(target=self.regular_pubtime))
-        thread_list.append(threading.Thread(target=self.regular_job_tag))
-        thread_list.append(threading.Thread(target=self.regular_jobname))
-        thread_list.append(threading.Thread(target=self.regular_sex))
-        thread_list.append(threading.Thread(target=self.regular_age))
-        thread_list.append(threading.Thread(target=self.regular_major))
-        thread_list.append(threading.Thread(target=self.regular_degree))
-        thread_list.append(threading.Thread(target=self.regular_exp))
-        thread_list.append(threading.Thread(target=self.regular_skill))
-        thread_list.append(threading.Thread(target=self.regular_demand))
-        thread_list.append(threading.Thread(target=self.regular_duty))
-        thread_list.append(threading.Thread(target=self.regular_benefit))
+        self.result["jdInc"] = self.result_inc
+        self.result["jdJob"] = self.result_job
 
-        for t in thread_list:
-            t.start()
 
-        for t in thread_list:
-            t.join()
-        return self.result
 
-    def parser(self,htmlContent=None,fname=None,url=None):
+    def parser_basic(self,htmlContent=None,fname=None,url=None):
         self.preprocess(htmlContent,fname,url)
         self.regular_incname()
         self.regular_inc_tag()
         self.regular_pubtime()
         self.regular_jobname()
         self.regular_job_tag()
+        self.regular_pay()
+
+        self.regular_degree()
+        self.regular_workplace()
+        self.regular_benefit()
+        self.regular_other()
+        
+        return self.result
+
+
+
+    def parser_detail(self,htmlContent=None,fname=None,url=None):
+        self.preprocess(htmlContent,fname,url)
+        self.regular_incname()
+        self.regular_inc_tag()
+        self.regular_pubtime()
+        self.regular_jobname()
+        self.regular_job_tag()
+        self.regular_pay()
+
         self.regular_sex()
         self.regular_age()
         self.regular_major()
@@ -389,13 +358,15 @@ class JdParserZhiLian(JdParserTop):
         self.regular_exp()
         self.regular_skill()
         self.regular_workplace()
-        self.regular_pay()
         self.regular_cert()
         self.regular_demand()
         self.regular_duty()
         self.regular_benefit()
+        self.regular_other()
 
         return self.result
+        
+
 
     def ouput(self):
         for line in self.linelist:
@@ -407,10 +378,20 @@ class JdParserZhiLian(JdParserTop):
 
 
 if __name__ == "__main__":
+    import json,os
     test = JdParserZhiLian()
-    htmlContent = codecs.open('./test_jds/zhilian/zhilian_jd_102.html','rb','utf-8').read()
-    test.parser(htmlContent,fname=None,url=None)
-    test.multi_process_parser(htmlContent, fname=None, url=None)
-    test.ouput()
+    path = "./test_jds/zhilian/"
+    fnames = [ path+fname for fname in os.listdir(path) if fname[-4:]=="html" ][:5]
+    for fname in fnames:
+        htmlContent = codecs.open(fname,'rb','utf-8').read()
+        print '=='*20,fname
+        print "basic:"
+        result1 = test.parser_basic(htmlContent)
+        print json.dumps(result1,ensure_ascii=False,indent=4)
+
+        print 'detail'
+        result2 = test.parser_detail(htmlContent)
+        print json.dumps(result2,ensure_ascii=False,indent=4)
+        print "\n"
 
 

@@ -4,7 +4,7 @@
 import sys,re,codecs,jieba
 from bs4 import BeautifulSoup
 from urllib2 import urlopen
-from collections import OrderedDict,Counter
+from collections import OrderedDict 
 from base import JdParserTop
 
 reload(sys)
@@ -13,32 +13,49 @@ sys.setdefaultencoding('utf-8')
 
 class JdParserLiePin(JdParserTop):
     """
-    对lagou Jd 结合html 进行解析
+    对liepin Jd 结合html 进行解析
     """
     def __init__(self):
         JdParserTop.__init__(self)
         self.result = OrderedDict()
+        self.result_inc = OrderedDict()
+        self.result_job = OrderedDict()
 
 
     def preprocess(self,htmlContent,fname=None,url=None):
         self.result.clear()
+        self.result_inc.clear()
+        self.result_job.clear()
+
+        self.result["jdFrom"] = "liepin"
+
         html = ""
         if url!=None:
-            html = urlopen(url).read()
+            html = urlopen(url).read().decode("utf-8")
         elif htmlContent:
             html = htmlContent
         elif fname:
-            html = open(fname).read()
+            html = open(fname).read().decode(u"utf-8")
         
-        if len(html)<60 or re.search(u"猎头等级|服务好评率",html):
+        if len(html)<60:
             raise Exception("input arguments error")
+        
+        if re.search(u"职务发布者|猎头等级|服务好评率",html):
+            self.lietou = 1  # 猎头发布
+        else:
+            self.lietou = 0  # 企业发布
+
+
         
         self.html= re.sub(u"<br.?/?>|<BR.?/?>|<br>",u"\n",html)
 
         self.soup = BeautifulSoup(self.html)
 
         self.jdsoup = self.soup.find("div","title")
-        self.compsoup =self.soup.find("div","side").find("div","right-post-top")
+        if self.lietou:
+            self.compsoup = BeautifulSoup()
+        else:
+            self.compsoup = self.soup.find("div","side").find("div","right-post-top")
 
         self.jdstr = self.jdsoup.find("div","content content-word").get_text().strip()
         self.linelist = [ line.strip() for line in self.SPLIT_LINE.split(self.jdstr) if len(line)>1]
@@ -46,45 +63,50 @@ class JdParserLiePin(JdParserTop):
         # 针对基本信息，提前存储，方便解析基本字段
         self.jdtop_soup = self.jdsoup.find("div","job-main").find("div","job-title-left")
         self.jdtop2_soup = self.jdsoup.find("div","job-main").find("div","job-title-left").find("div","resume clearfix").find_all("span")
-        self.jdbasic_soup = self.jdsoup.find("div","job-main main-message ").find("div","content")
-        self.jdbasic_soup = self.jdbasic_soup.find_all("li")
-   
+        
 
 
 
     def regular_incname(self):
-        inc_name = self.compsoup.find('p',"post-top-p").get_text()
-        self.result['incName'] = inc_name.strip()
+        if not self.lietou and self.compsoup:
+            find_inc_name = self.compsoup.find('p',"post-top-p")
+            if find_inc_name:
+                self.result_inc['incName'] = find_inc_name.get_text().strip()
+                if find_inc_name.find("a"):
+                    self.result_inc["incUrl"] = find_inc_name.find("a").get("href","None")
+        elif self.lietou:
+            find_incname = self.jdsoup.find("div","title-info").find('h3')
+            if find_incname:
+                self.result_inc["incName"] = find_incname.get_text().strip()
+
+
 
 
     def regular_inc_tag(self):
-        res = {"incIntro":"None","incUrl":"None"}
-        inc_tags = [line.strip() for line in self.compsoup.find("div","content content-word").get_text().split() if len(line)>1 ]
-        
+        res = {"incIntro":"None"}
+            
+        if self.lietou == 0 :
+            inc_tags = [line.strip() for line in self.compsoup.find("div","content content-word").get_text().split() if len(line)>1 ]
 
-        for tag in inc_tags:
-            kv = re.split(u"[:：]",tag)
-            if len(kv)>1:
-                key,value = kv[0],kv[1]
-                if re.search(u"规模",key):
-                    res["incScale"] = value.strip()
-                elif re.search(u"性质",key):
-                    res["incType"] = value.strip()
-                elif re.search(u"地址",key):
-                    res["incLocation"] = value.strip()
-                elif re.search(u"网站",key):
-                    res["incUrl"] = value.strip()
+            for tag in inc_tags:
+                kv = re.split(u"[:：]",tag)
+                if len(kv)>1:
+                    key,value = kv[0],kv[1]
+                    if re.search(u"规模",key):
+                        res["incScale"] = value.strip()
+                    elif re.search(u"性质",key):
+                        res["incType"] = value.strip()
+                    elif re.search(u"地址",key):
+                        res["incLocation"] = value.strip()
+                    elif re.search(u"网站",key):
+                        res["incUrl"] = value.strip()
 
-        res["incIndustry"] = self.compsoup.find("div","content content-word").find("a").get_text().strip()
-        find_inc_intro = self.soup.find("div",{"class":"job-main main-message noborder ","data-selector":"introduction"})
+            res["incIndustry"] = self.compsoup.find("div","content content-word").find("a").get_text().strip()
 
-        if re.search(u"企业介绍",self.html) and find_inc_intro: 
-            res["incIntro"] = find_inc_intro.get_text().strip()
-            incUrl = re.search(u"(公司网站|官网)[:\s： ]([\w\d\./_:]+.com)",res["incIntro"])
-            if not res["incUrl"] and incUrl:
-                res["incUrl"] = re.search("[\w\d\./_:]+",incUrl.group()).group() 
-
-        self.result.update(res)
+        find_inc_intro = self.jdsoup.find("h3",text=re.compile(u"企业介绍"))
+        if find_inc_intro:
+            res["incIntro"] = find_inc_intro.find_next("div","content").get_text().strip()
+        self.result_inc.update(res)
 
 
 
@@ -93,30 +115,38 @@ class JdParserLiePin(JdParserTop):
         发布时间 & 截止时间
         """
         pub_time = self.jdtop_soup.find("p","basic-infor").find_all("span")[1].get_text()
-        self.result["pub_time"] = re.sub(u"[:：　\s\n]|发布于","",pub_time)
+        self.result["pubTime"] = re.sub(u"[:：　\s\n]|发布于","",pub_time)
 
 
 
     def regular_jobname(self):
         jobname = self.jdsoup.find("div","title-info").find('h1').get_text()
-        self.result['jobName'] = self.CLEAN_JOBNAME.sub("",jobname)
+        self.result_job['jobPosition'] = self.CLEAN_JOBNAME.sub("",jobname)
 
 
     def regular_job_tag(self):
         res = {"jobCate":"",'jobType':"全职","jobNum":""}
-        if re.search(u"实习",self.result["jobName"]):
+        if re.search(u"实习",self.result_job["jobPosition"]):
             res["jobType"]=u"实习"
         
-        self.result.update(res)
+        self.result_job.update(res)
+
+
+
 
     def regular_sex(self):
-        """
-        不限:0
-        男:1
-        女:2
-        """
-        res = u"不限"
-        for line in self.jdbasic_soup:
+        jdbasic_soup = self.jdsoup.find("h3",text=re.compile(u"其他信息")).find_next("div","content").find_all("li")
+        for line in jdbasic_soup:
+            key,value = re.split(u"[:：]",line.get_text())
+            if re.search(u"性别",key):
+                self.result_job["gender"] = value.strip()
+                break
+
+    
+    def regular_sex_detail(self):
+        res = ""
+        jdbasic_soup = self.jdsoup.find("h3",text=re.compile(u"其他信息")).find_next("div","content").find_all("li")
+        for line in jdbasic_soup:
             key,value = re.split(u"[:：]",line.get_text())
             if re.search(u"性别",key):
                 if re.search(u"性别不限|男女不限|不限",value):
@@ -127,100 +157,96 @@ class JdParserLiePin(JdParserTop):
                     res = u"女"
                 break
 
-        self.result['sex'] = str(res)
+        if not res:
+            for line in self.linelist:
+                find_sex = re.search(u"男|女|性别不限",line)
+                if find_sex:
+                    res = find_sex.group()
+                    break
+        if not res:
+            res = u"不限"
+        self.result_job["gender"] = str(res)
 
 
     def regular_age(self):
         """
         [minage,maxage]
         """ 
-        res = [0,100]
         agestr = self.jdtop2_soup[-1].get_text()
 
-        age = re.findall(u"\d+",agestr)
-        if len(age)>1:
-            res = (age[0],age[-1])
-        elif len(age)==1:
-            if re.search(u"以上|不低于|至少|大于|超过",agestr):
-                res[0] = age[0]
-            elif re.search(u"小于|低于|不超过|不得?高于|以下|不大于",agestr):
-                res[1] = age[0]
-            else:
-                res[0] = int(age[0])-3
-                res[1] = int(age[0])+3
+        self.result_job['age'] = agestr
 
-        self.result['age'] = map(str,res)
 
 
     def regular_major(self):
-        res = []
-        for line in self.jdbasic_soup:
-            key,value = re.split(u"[:：]",line.get_text())
-            if re.search(u"专业要求",key):
-                if re.search(u"不限",value):
-                    res = []
-                    break
-                else:
-                    for token in jieba.cut(value):
-                        if token in self.majordic:
-                            res.append(token)
+        # 由others处定义
 
-        self.result["major"] = res
-
+        self.result_job["jobMajorList"] = [u"不限"]
 
 
     def regular_degree(self):
         degree = self.jdtop2_soup[0].get_text().strip()
-        for w in jieba.cut(degree):
-            if w in self.degreedic:
-                degree = w
-                break
-        self.result['degree'] = degree
+        self.result_job['jobDiploma'] = degree
 
 
 
     def regular_exp(self):
-        res = [0,100]
-        expstr = self.jdtop2_soup[1].get_text()
-        
-        exp = re.findall("\d+",expstr)
-        if len(exp)==1:
-            if re.search(u"以上|大于|至少",expstr):
-                res[0]= exp[0]
 
-        self.result['exp'] = map(str,res)
+        expstr = self.jdtop2_soup[1]
+        self.result_job['jobWorkAge'] = expstr.get_text().strip() if expstr else "None"
     
 
     def regular_skill(self):
-        res = []
-        #　先加上语言要求
-        res.append(self.jdtop2_soup[2].get_text().strip())
+        res = {}
         for line in self.linelist:
             for word in jieba.cut(line):
-                word = word.lower()
+                word = word.strip().lower()
                 if word in self.skilldic:
-                    res.append(word)
-        res =[w[0] for w in Counter(res).most_common(4)]
-        self.result["skill"] = res
+                    res[word] = res.get(word,0) + 1
+        sorted_res = sorted(res.items(),key=lambda d:d[1],reverse=True)
+        res = [ word for word,count in sorted_res[:5] ]
+
+        self.result_job["skillList"] = res
 
 
+    def regular_language(self):
+        #　语言要求
+        res = ""
+        res = self.jdtop2_soup[2].get_text().strip()
+        self.result_job["language"] = res
+        
 
     def regular_workplace(self):
         res = self.jdtop_soup.find("p","basic-infor").find("span").get_text().strip()        
-        self.result['workplace'] = res
+        self.result_job['jobWorkLoc'] = res
 
 
 
     def regular_pay(self):
-        res = [0,0]
         paystr = self.jdtop_soup.find("p","job-main-title").get_text()
-        if re.search(u"万",paystr):
-            pay = re.findall("\d+",paystr)
-            if len(pay)==1:
-                res[0] = int(pay[0]+"0000")/12
-            elif len(pay)>1:
-                res[0],res[1] = int(pay[0]+"0000")/12,int(pay[1]+"0000")/12
-        self.result['pay'] = map(str,res)
+        self.result_job['jobSalary'] = re.sub(u"\s+|\d+小时反馈|\d+天内?反馈|查看率.+|反馈率.+","", paystr.strip())
+        
+        find_pay_tag = self.jdsoup.find("h3",text=re.compile(u"薪酬福利"))
+        others = {}
+        if find_pay_tag:
+            pay_tags = find_pay_tag.find_next("div","content").find_all("li")
+
+            for line in pay_tags:
+                key,value = re.split(u"：",line.get_text())
+                if re.search(u"职位年薪",key):
+                    others["yearSalary"] = value.strip()
+                elif re.search(u"薪资构成",key):
+                    others["salaryCombine"] = value.strip()
+                elif re.search(u"年假福利",key):
+                    others["holidayWelfare"] = value.strip()
+                elif re.search(u"社保福利",key):
+                    others["socialWelfare"] = value.strip()
+                elif re.search(u"居住福利",key):
+                    others["livingWelfare"] = value.strip()
+                elif re.search(u"通讯交通",key):
+                    others["trafficWelfare"] = value.strip()
+
+        self.result_job["others"] = others
 
     
     def regular_cert(self):
@@ -238,9 +264,8 @@ class JdParserLiePin(JdParserTop):
                     findcert = re.search(u"有.+资格",line)
                     if findcert:
                         res.append(findcert.group())
-        self.result['cert'] = re.sub(u"[或及以上]","",' / '.join(res))
-        self.result['cert'] = self.result['cert'].split(' / ')
 
+        self.result_job['certList'] = res
     
 
 
@@ -272,7 +297,7 @@ class JdParserLiePin(JdParserTop):
                     res.append(self.CLEAN_LINE.sub("",line))
         
         res = [str(i+1)+'. '+line for i,line in enumerate(res)]
-        self.result['demand'] = '\n'.join(res)
+        self.result_job['workDemand'] = '\n'.join(res)
 
     def regular_duty(self):
 
@@ -303,13 +328,12 @@ class JdParserLiePin(JdParserTop):
         
         res = [str(i+1)+'. '+line for i,line in enumerate(res)]
 
-        self.result['duty'] = '\n'.join(res)
+        self.result_job['workDuty'] = '\n'.join(res)
 
 
 
     def regular_benefit(self):
-        jdstr = self.jdsoup.find("div","").get_text()
-        res,linelist = [],[]
+        res = []
         
         job_tags = self.jdsoup.find("div","job-main").find("div","tag-list clearfix")
         if job_tags:
@@ -317,26 +341,43 @@ class JdParserLiePin(JdParserTop):
             for tag in job_tags:
                 res.append(tag.get_text())
 
-        pos = list(self.START_BENEFIT.finditer(jdstr))
-        if not res and len(pos)>0:
-            linelist = [ re.sub("[\s　]+"," ",line) for line in self.SPLIT_LINE.split(jdstr[pos[-1].span()[1]:]) if line>3]
-            for i in range(len(linelist)):
-                line = linelist[i]
-                if len(line)<2:
-                    continue
-                if re.match(u"\d[、.\s ]|[（\(【][a-z\d][\.、\s ]|[\u25cf\uff0d]",line) or self.clf.predict(line)=="benefit":
-                    res.append(line)
-                elif i<len(linelist)-1 and self.clf.predict(linelist[i+1])=='benefit':
-                    res.append(line)
-                else:
-                    break
-        
-                res = [str(i+1)+'. '+line for i,line in enumerate(res)]
-
-        self.result['benefit'] = '\n'.join(res)
+        self.result_job['jobWelfare'] = '\n'.join(res)
 
 
-    def parser(self,htmlContent=None,fname=None,url=None):
+    def regular_other(self):
+        res = {}
+        jdbasic_soup = self.jdsoup.find("h3",text=re.compile(u"其他信息")).find_next("div","content").find_all("li")
+
+        for line in jdbasic_soup:
+            key,value = re.split(u"[:：]",line.get_text())
+            if re.search(u"所属部门",key):
+                res["jobDepartment"] = value.strip()
+            elif re.search(u"专业要求",key):
+                self.result_job["jobMajorList"] = [value.strip()]
+            elif re.search(u"汇报对象",key):
+                res["jobReport"] = value.strip()
+            elif re.search(u"下属人数",key):
+                res["jobSubSize"] = value.strip()
+
+            elif re.search(u"性别要求",key):
+                self.result_job["gender"] = value.strip()
+            elif re.search(u"所属行业",key):
+                self.result_inc["incIndustry"] = value.strip()
+            elif re.search(u"企业性质",key):
+                self.result_inc["incType"] = value.strip()
+            elif re.search(u"企业规模",key):
+                self.result_inc["incScale"] = value.strip()
+
+        self.result_job["jobDesc"] = self.jdstr
+        self.result["jdInc"] = self.result_inc
+        self.result["jdJob"] = self.result_job
+        self.result["jdJob"]["others"] = res.copy()
+
+
+    def parser_basic(self,htmlContent=None,fname=None,url=None):
+        """
+        页面简单抽取
+        """
         self.preprocess(htmlContent,fname,url)
         self.regular_incname()
         self.regular_inc_tag()
@@ -348,6 +389,31 @@ class JdParserLiePin(JdParserTop):
         self.regular_major()
         self.regular_degree()
         self.regular_exp()
+        self.regular_language()
+        self.regular_workplace()
+        self.regular_pay()
+        self.regular_benefit()
+        self.regular_other()
+        
+        return self.result
+
+
+    def parser_detail(self,htmlContent=None,fname=None,url=None):
+        """
+        进一步简单的语义解析
+        """
+        self.preprocess(htmlContent,fname,url)
+        self.regular_incname()
+        self.regular_inc_tag()
+        self.regular_pubtime()
+        self.regular_jobname()
+        self.regular_job_tag()
+        self.regular_sex()
+        self.regular_age()
+        self.regular_major()
+        self.regular_degree()
+        self.regular_exp()
+        self.regular_language()
         self.regular_skill()
         self.regular_workplace()
         self.regular_pay()
@@ -355,13 +421,12 @@ class JdParserLiePin(JdParserTop):
         self.regular_demand()
         self.regular_duty()
         self.regular_benefit()
+        self.regular_other()
 
         return self.result
 
-    def ouput(self):
-        for line in self.linelist:
-            print line
 
+    def ouput(self):
         for k,v in self.result.iteritems():
             print k
             if isinstance(v,list):
@@ -369,19 +434,21 @@ class JdParserLiePin(JdParserTop):
             else:
                 print v
 
-import os
+
+
 if __name__ == "__main__":
+    import os,json 
+
     test = JdParserLiePin()
     path = './test_jds/liepin/'
     fnames = [ path+fname for fname in os.listdir(path) ]
-    for fname in fnames[-10:]:
-        try:
-            print '==='*20,fname
-            htmlContent = codecs.open(fname,'rb','utf-8').read()
-            test.parser(htmlContent,fname=None,url=None)
-            test.ouput()
-        except Exception,e:
-            print 'e',e
-            continue
-
+    fnames += [ "./test_jds/liepin/liepin_1lt.html" ]
+    for fname in fnames:
+        print '==='*20,fname
+        htmlContent = codecs.open(fname,'rb','utf-8').read()
+        result1 = test.parser_basic(htmlContent,fname=None,url=None)
+        print json.dumps(result1,ensure_ascii=False,indent=4)
+        print "detail"
+        result2 = test.parser_detail(htmlContent,url=None)
+        print json.dumps(result2,ensure_ascii=False,indent=4)
 

@@ -4,10 +4,8 @@
 import sys,re,codecs,jieba
 from bs4 import BeautifulSoup
 from urllib2 import urlopen
-from util import strQ2B
-from collections import OrderedDict,Counter
+from collections import OrderedDict
 from base import JdParserTop
-from threading import Thread
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -20,11 +18,18 @@ class JdParserLagou(JdParserTop):
     def __init__(self):
         JdParserTop.__init__(self)
         self.result = OrderedDict()
+        self.result_inc = OrderedDict()
+        self.result_job = OrderedDict()
         
 
 
     def preprocess(self,htmlContent=None,fname=None,url=None):
         self.result.clear()
+        self.result_inc.clear()
+        self.result_job.clear()
+        self.result["jdFrom"] = "lagou"
+
+
         html = ""
         if url!=None:
             html = urlopen(url).read()
@@ -32,16 +37,14 @@ class JdParserLagou(JdParserTop):
             html = htmlContent
         elif fname:
             html = codecs.open(fname,'rb','utf-8').read()
-        
-        if len(html)<60:
-            raise Exception("error input")
+       
         
         self.html= re.sub(u"<br./?./?>|<BR.?/?>|<br>",u"。",html)
         soup = BeautifulSoup(self.html)
 
         self.jdsoup = soup.find("dl","job_detail")
         self.compsoup = soup.find("dl","job_company")
-        self.jdstr = self.jdsoup.find("dd","job_bt").get_text()
+        self.jdstr = self.jdsoup.find("dd","job_bt").get_text().strip()
 
         self.linelist = [ line.strip() for line in self.SPLIT_LINE.split(self.jdstr) if len(line)>2]
     
@@ -54,7 +57,7 @@ class JdParserLagou(JdParserTop):
             res = incname1
         else:
             res = self.compsoup.find("dt").find("h2","fl").get_text().split()[0]
-        self.result["incName"] = res
+        self.result_inc["incName"] = res
 
 
 
@@ -80,7 +83,7 @@ class JdParserLagou(JdParserTop):
         inc_place = self.compsoup.find("div",{"id":"smallmap"}).findPrevious("div").get_text()
         res["incLocation"] = inc_place.strip()
         res["incType"] = u"IT"
-        self.result.update(res)
+        self.result_inc.update(res)
 
 
     def regular_pubtime(self):
@@ -88,14 +91,13 @@ class JdParserLagou(JdParserTop):
         发布时间 & 截止时间
         """
         pub_time = self.jdsoup.find("p","publish_time").get_text().split()[0]
-        self.result["pub_time"] = pub_time
-        self.result["end_time"] = ""
+        self.result["pubTime"] = pub_time
 
 
 
     def regular_jobname(self):
         jobname = self.jdsoup.find("dt","clearfix join_tc_icon").find('h1').get_text().split()[-1]
-        self.result['jobName'] = self.clean_jobname(jobname.strip())
+        self.result_job['jobPosition'] = self.clean_jobname(jobname.strip())
 
 
     def regular_jobtag(self):
@@ -105,10 +107,10 @@ class JdParserLagou(JdParserTop):
         res = {"jobType":"全职","jobCate":"","jobNum":""}
 
         res["jobType"] = self.jdsoup.find("dd","job_request").find_all("span")[-1].get_text()
-        res["jobCate"] = self.result["incIndustry"]
-        if re.search(u"实习|兼职",self.result["jobName"]):
-            res["jobType"]=u"实习"
-        self.result.update(res)
+        find_jobtype = re.search(u"实习|兼职",self.result_job["jobPosition"])
+        if find_jobtype:
+            res["jobType"] = find_jobtype.group()
+        self.result_job.update(res)
 
 
     def regular_sex(self):
@@ -128,112 +130,89 @@ class JdParserLagou(JdParserTop):
                     res = u"女"
                 break
 
-        self.result['sex'] = str(res)
+        self.result_job['gender'] = str(res)
 
 
     def regular_age(self):
         """
         (minage,maxage)
         """ 
-        res = [0,100]
+        agestr = ""
         for line in self.linelist:
             if re.search(u"\d+后",line):continue
             if self.AGE.search(line):
                 findage = re.search(u"(\d{2}[\-－到至])?\d{2}岁|(至少|不低于|不超过|不大于|大概|大约|不少于|大于)?\d+周?岁|\d+周岁(以上|左右|上下)",line)
                 if findage:
-                    agestr = findage.group()
-                    age = re.findall(u"\d{,2}",agestr)
-                    if len(age)>=2:
-                        res = (age[0],age[1])
-                    elif len(age)==1:
-                        if re.search(u"以上|不低于|至少|大于|超过",line):
-                            res[0] = age[0]
-                        elif re.search(u"小于|低于|不超过|不得?高于|以下|不大于",line):
-                            res[1] = age[0]
-                        elif re.search(u"左右|大约|大概",line):
-                            res[0],res[1] = int(age[0])-3,int(age[-1])+3
-                    break
+                   agestr = findage.group()
+                   break
 
-        self.result['age'] = map(str,res)
+        self.result_job['age'] = agestr
 
 
     def regular_major(self):
-        res = []
-        for line in self.linelist:
+        res = set()
+        for line  in self.linelist:
             for word in jieba.cut(line):
-                if word.lower() in self.majordic or word[:-2] in self.majordic:
-                    res.append(word)
+                if len(word)>1 and word.lower() in self.majordic:
+                    res.add(word.lower())
 
-        self.result["major"] = list(set(res))
+        self.result_job["jobMajorList"] = list(res)
 
 
 
     def regular_degree(self):
         degree =  self.jdsoup.find("dd","job_request").find_all("span")[3].get_text().strip()
-        for w in jieba.cut(degree):
-            if w in self.degreedic:
-                degree = w
-                break
-        self.result['degree'] = degree
+        self.result_job['jobDiploma'] = degree
 
 
 
     def regular_exp(self):
-        res = [0,100]
-        expstr =  self.jdsoup.find("dd","job_request").find_all("span")[2].get_text()
-        exp = re.findall("\d+",expstr)
-        if len(exp)==1:
-            res[0] = exp[0]
-        elif re.search(u"半",expstr):
-            res[0] = 0.5
-        elif len(exp)>1:
-            res = (exp[0],exp[-1])
-        self.result['exp'] = map(str,res)
+
+        find_exp =  self.jdsoup.find("dd","job_request").find_all("span")[2]
+        expstr = find_exp.get_text() if find_exp else "None"
+        self.result_job['jobWorkAge'] = expstr
     
 
     def regular_skill(self):
-        res = []
+        res = {}
         for line in self.linelist:
             for word in jieba.cut(line):
-                word = word.lower()
-                if word in self.skilldic:
-                    res.append(word)
-        res =[w[0] for w in Counter(res).most_common(5)]
-        self.result["skill"] = res
+                if len(word)>1 and word.lower() in self.skilldic:
+                    res[word.lower()] = res.get(word.lower(),0) + 1
+
+        sorted_res = sorted(res.items(), key = lambda d:d[1], reverse=True)
+
+        res = [ word for (word,cnt) in sorted_res[:5] ]
+        self.result_job["skillList"] = res
 
 
 
     def regular_workplace(self):
         workplace =  self.jdsoup.find("dd","job_request").find_all("span")[1].get_text().strip()
-        self.result['workplace'] = workplace
+        self.result_job['jobWorkLoc'] = workplace
 
 
 
     def regular_pay(self):
-        res =[0,0]
         paystr =  self.jdsoup.find("dd","job_request").find_all("span")[0].get_text().strip()
         if paystr:
-            pay = map(lambda x: re.sub("k","000",x),re.findall("\d+[kK]",paystr))
-            if len(pay)==2:
-                res[0] = pay[0]
-                res[1] = pay[-1]
+            self.result_job['jobSalary'] = paystr
 
-        self.result['pay'] = map(str,res)
 
     
     def regular_cert(self):
         res = []
         for line in self.linelist:
             findcert = self.CERT.search(line)
-            if findcert:
+            if findcert and len(findcert.group())<6 and not re.search(u"保证",findcert.group()):
                 res.append(findcert.group())
             else:
-                findcert = re.search(u"有(.+证)",line)
+                findcert = re.search(u"有(.+资格证)",line)
                 if findcert:
                     res.append(findcert.group(1))
 
         res = re.sub(u"[或及以上]","",'|'.join(res))
-        self.result['cert'] = res.split('|')
+        self.result_job['certList'] = res.split('|')
 
     
 
@@ -267,7 +246,7 @@ class JdParserLagou(JdParserTop):
 
         res = [str(i+1)+'.'+line for i,line in enumerate(res)]
 
-        self.result['demand'] = '\n'.join(res)
+        self.result_job['workDemand'] = '\n'.join(res)
 
 
     def regular_duty(self):
@@ -299,45 +278,51 @@ class JdParserLagou(JdParserTop):
 
         res = [str(i+1)+'. '+line for i,line in enumerate(res)]
 
-        self.result['duty'] = '\n'.join(res)
+        self.result_job['workDuty'] = '\n'.join(res)
 
 
     def regular_benefit(self):
         
-        res,linelist = [],[]
-
+        res = []
         tmp = self.jdsoup.find("p","publish_time")
         if tmp:
             res.append(re.sub(u"职位诱惑[:：\s　]+","",tmp.findPrevious("p").get_text()))
 
-        pos = list(self.START_BENEFIT.finditer(self.jdstr))
-        if pos:
-            linelist = [re.sub("[\s　]+"," ",line.strip()) for line in self.SPLIT_LINE.split(self.jdstr[pos[-1].span()[1]:]) if len(line)>3]
-
-        linelist = filter(lambda x:len(x)>2,linelist)
-        for i in range(len(linelist)):
-            line = linelist[i]
-            if re.match(u"\d[、\.\s]|[（\(]?[a-z\d][\.、\s][\u25cf\ff0d]",line) or self.BENEFIT.search(line) or self.clf.predict(line)=='benefit':
-                res.append(line)
-            elif i<len(linelist)-1 and self.clf.predict(linelist[i+1])=='benefit':
-                res.append(line)
-            else:
-                break
-            if self.START_DUTY.search(line):
-                break
-        self.result['benefit'] = '\n'.join(res)
+        self.result_job['jobWelfare'] = '\n'.join(res)
 
 
     def regular_other(self):
-        res = []
-        for line in self.linelist:
-            if len(line)>5 and self.clf.predict(line)=='other':
-                res.append(line)
-        self.result['other'] = '\n'.join(res)
-
+        self.result_job["jobDesc"] = self.jdstr
+        self.result["jdInc"] = self.result_inc
+        self.result["jdJob"] = self.result_job
 
     
-    def parser(self,htmlContent=None,fname=None,url=None):
+    def parser_basic(self,htmlContent=None,fname=None,url=None):
+        """
+        只做基本抽取，保证99%以上正确
+        """
+        self.preprocess(htmlContent,fname,url)
+        self.regular_inc_name()
+        self.regular_inc_tag()
+        self.regular_pubtime()
+        self.regular_jobname()
+        self.regular_jobtag()
+        self.regular_degree()
+        self.regular_exp()
+        self.regular_pay()
+        self.regular_benefit()
+        self.regular_workplace()
+        self.regular_other()
+
+        return self.result
+
+
+
+
+    def parser_detail(self,htmlContent=None,fname=None,url=None):
+        """
+        进一步进行简单的语义信息抽取，争取90％以上准确率
+        """
         self.preprocess(htmlContent,fname,url)
         self.regular_inc_name()
         self.regular_inc_tag()
@@ -356,20 +341,28 @@ class JdParserLagou(JdParserTop):
         self.regular_demand()
         self.regular_duty()
         self.regular_benefit()
-  #        self.regular_other()
-  #      assert len(self.result.keys())==19,"wrong keys"
-
+        self.regular_other()
+        
         return self.result
+
+
+
 
     def ouput(self):
         for k,v in self.result.iteritems():
             print k
             print v
 
-
 if __name__ == "__main__":
-    test = JdParserLagou()
-    test.parser(fname="./test_jds/lagou/lagou_100.html")
-    test.ouput()
+    import json 
 
+    test = JdParserLagou()
+    url = "http://www.lagou.com/jobs/1018301.html"
+    result1 = test.parser_basic(url=url)
+    print json.dumps(result1,ensure_ascii=False,indent=4)
+   
+    print 'detail'
+    result2 = test.parser_detail(url = url)
+    print json.dumps(result2,ensure_ascii=False,indent=4)
+    
 

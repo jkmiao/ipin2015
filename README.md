@@ -1,4 +1,18 @@
-# ipin2015
-my work in ipin,mainly about data visualization,NLP,and Information retrieval(jd_parser and cv_parser)
+# welcome jkmiao's codehub
 
-http://www.ipin.com/
+some of my works in my parttime life or in job,mainly about data visualization,NLP,and IR.
+
+
+
+
+### hobby
+* ball games
+* swimming
+* reading,music .etc
+
+![about me]("http://jkmiao.sinaapp.com/")
+
+
+little progress each day,great achievements for a long time.
+---
+--jkmiao@2016.01
