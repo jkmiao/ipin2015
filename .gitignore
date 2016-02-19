@@ -1,0 +1,3 @@
+train*.txt
+test*.txt
+*.d2v
